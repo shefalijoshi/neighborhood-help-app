@@ -9,75 +9,129 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as LoginRouteImport } from './routes/login'
-import { Route as DashboardRouteImport } from './routes/dashboard'
-import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthRouteImport } from './routes/_auth'
+import { Route as AuthIndexRouteImport } from './routes/_auth.index'
+import { Route as AuthVouchPendingRouteImport } from './routes/_auth.vouch-pending'
+import { Route as AuthCreateProfileRouteImport } from './routes/_auth.create-profile'
+import { Route as AuthAppRouteImport } from './routes/_auth._app'
+import { Route as AuthAppVouchRouteImport } from './routes/_auth._app.vouch'
+import { Route as AuthAppInviteRouteImport } from './routes/_auth._app.invite'
+import { Route as AuthAppDashboardRouteImport } from './routes/_auth._app.dashboard'
 
-const OnboardingRoute = OnboardingRouteImport.update({
-  id: '/onboarding',
-  path: '/onboarding',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DashboardRoute = DashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
+const AuthRoute = AuthRouteImport.update({
+  id: '/_auth',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
+const AuthIndexRoute = AuthIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthRoute,
+} as any)
+const AuthVouchPendingRoute = AuthVouchPendingRouteImport.update({
+  id: '/vouch-pending',
+  path: '/vouch-pending',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AuthCreateProfileRoute = AuthCreateProfileRouteImport.update({
+  id: '/create-profile',
+  path: '/create-profile',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AuthAppRoute = AuthAppRouteImport.update({
+  id: '/_app',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AuthAppVouchRoute = AuthAppVouchRouteImport.update({
+  id: '/vouch',
+  path: '/vouch',
+  getParentRoute: () => AuthAppRoute,
+} as any)
+const AuthAppInviteRoute = AuthAppInviteRouteImport.update({
+  id: '/invite',
+  path: '/invite',
+  getParentRoute: () => AuthAppRoute,
+} as any)
+const AuthAppDashboardRoute = AuthAppDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AuthAppRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/dashboard': typeof DashboardRoute
   '/login': typeof LoginRoute
-  '/onboarding': typeof OnboardingRoute
+  '/create-profile': typeof AuthCreateProfileRoute
+  '/vouch-pending': typeof AuthVouchPendingRoute
+  '/': typeof AuthIndexRoute
+  '/dashboard': typeof AuthAppDashboardRoute
+  '/invite': typeof AuthAppInviteRoute
+  '/vouch': typeof AuthAppVouchRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/dashboard': typeof DashboardRoute
   '/login': typeof LoginRoute
-  '/onboarding': typeof OnboardingRoute
+  '/create-profile': typeof AuthCreateProfileRoute
+  '/vouch-pending': typeof AuthVouchPendingRoute
+  '/': typeof AuthIndexRoute
+  '/dashboard': typeof AuthAppDashboardRoute
+  '/invite': typeof AuthAppInviteRoute
+  '/vouch': typeof AuthAppVouchRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/dashboard': typeof DashboardRoute
+  '/_auth': typeof AuthRouteWithChildren
   '/login': typeof LoginRoute
-  '/onboarding': typeof OnboardingRoute
+  '/_auth/_app': typeof AuthAppRouteWithChildren
+  '/_auth/create-profile': typeof AuthCreateProfileRoute
+  '/_auth/vouch-pending': typeof AuthVouchPendingRoute
+  '/_auth/': typeof AuthIndexRoute
+  '/_auth/_app/dashboard': typeof AuthAppDashboardRoute
+  '/_auth/_app/invite': typeof AuthAppInviteRoute
+  '/_auth/_app/vouch': typeof AuthAppVouchRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/dashboard' | '/login' | '/onboarding'
+  fullPaths:
+    | '/login'
+    | '/create-profile'
+    | '/vouch-pending'
+    | '/'
+    | '/dashboard'
+    | '/invite'
+    | '/vouch'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/dashboard' | '/login' | '/onboarding'
-  id: '__root__' | '/' | '/dashboard' | '/login' | '/onboarding'
+  to:
+    | '/login'
+    | '/create-profile'
+    | '/vouch-pending'
+    | '/'
+    | '/dashboard'
+    | '/invite'
+    | '/vouch'
+  id:
+    | '__root__'
+    | '/_auth'
+    | '/login'
+    | '/_auth/_app'
+    | '/_auth/create-profile'
+    | '/_auth/vouch-pending'
+    | '/_auth/'
+    | '/_auth/_app/dashboard'
+    | '/_auth/_app/invite'
+    | '/_auth/_app/vouch'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  DashboardRoute: typeof DashboardRoute
+  AuthRoute: typeof AuthRouteWithChildren
   LoginRoute: typeof LoginRoute
-  OnboardingRoute: typeof OnboardingRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/onboarding': {
-      id: '/onboarding'
-      path: '/onboarding'
-      fullPath: '/onboarding'
-      preLoaderRoute: typeof OnboardingRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/login': {
       id: '/login'
       path: '/login'
@@ -85,28 +139,99 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/dashboard': {
-      id: '/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof DashboardRouteImport
+    '/_auth': {
+      id: '/_auth'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
+    '/_auth/': {
+      id: '/_auth/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AuthIndexRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/_auth/vouch-pending': {
+      id: '/_auth/vouch-pending'
+      path: '/vouch-pending'
+      fullPath: '/vouch-pending'
+      preLoaderRoute: typeof AuthVouchPendingRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/_auth/create-profile': {
+      id: '/_auth/create-profile'
+      path: '/create-profile'
+      fullPath: '/create-profile'
+      preLoaderRoute: typeof AuthCreateProfileRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/_auth/_app': {
+      id: '/_auth/_app'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof AuthAppRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/_auth/_app/vouch': {
+      id: '/_auth/_app/vouch'
+      path: '/vouch'
+      fullPath: '/vouch'
+      preLoaderRoute: typeof AuthAppVouchRouteImport
+      parentRoute: typeof AuthAppRoute
+    }
+    '/_auth/_app/invite': {
+      id: '/_auth/_app/invite'
+      path: '/invite'
+      fullPath: '/invite'
+      preLoaderRoute: typeof AuthAppInviteRouteImport
+      parentRoute: typeof AuthAppRoute
+    }
+    '/_auth/_app/dashboard': {
+      id: '/_auth/_app/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof AuthAppDashboardRouteImport
+      parentRoute: typeof AuthAppRoute
     }
   }
 }
 
+interface AuthAppRouteChildren {
+  AuthAppDashboardRoute: typeof AuthAppDashboardRoute
+  AuthAppInviteRoute: typeof AuthAppInviteRoute
+  AuthAppVouchRoute: typeof AuthAppVouchRoute
+}
+
+const AuthAppRouteChildren: AuthAppRouteChildren = {
+  AuthAppDashboardRoute: AuthAppDashboardRoute,
+  AuthAppInviteRoute: AuthAppInviteRoute,
+  AuthAppVouchRoute: AuthAppVouchRoute,
+}
+
+const AuthAppRouteWithChildren =
+  AuthAppRoute._addFileChildren(AuthAppRouteChildren)
+
+interface AuthRouteChildren {
+  AuthAppRoute: typeof AuthAppRouteWithChildren
+  AuthCreateProfileRoute: typeof AuthCreateProfileRoute
+  AuthVouchPendingRoute: typeof AuthVouchPendingRoute
+  AuthIndexRoute: typeof AuthIndexRoute
+}
+
+const AuthRouteChildren: AuthRouteChildren = {
+  AuthAppRoute: AuthAppRouteWithChildren,
+  AuthCreateProfileRoute: AuthCreateProfileRoute,
+  AuthVouchPendingRoute: AuthVouchPendingRoute,
+  AuthIndexRoute: AuthIndexRoute,
+}
+
+const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
-  DashboardRoute: DashboardRoute,
+  AuthRoute: AuthRouteWithChildren,
   LoginRoute: LoginRoute,
-  OnboardingRoute: OnboardingRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

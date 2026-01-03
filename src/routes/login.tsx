@@ -1,67 +1,81 @@
-import { createFileRoute, redirect } from '@tanstack/react-router'
 import { useState } from 'react'
-import { supabase } from '../lib/supabase'
+import { createFileRoute, redirect } from '@tanstack/react-router'
+import { supabase } from '../lib/supabase' 
 
 export const Route = createFileRoute('/login')({
-  // Guard: If they ARE logged in, they don't need to be here!
+  // GUARD: If they are already logged in, don't even show this page
   beforeLoad: ({ context }) => {
     if (context.session) {
       throw redirect({ to: '/' })
     }
   },
-  component: LoginPage,
+  component: LoginComponent,
 })
 
-function LoginPage() {
+function LoginComponent() {
   const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
-  const [message, setMessage] = useState('')
+  const [message, setMessage] = useState<{ type: 'login' | 'join'; sent: boolean }>({
+    type: 'login',
+    sent: false,
+  })
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const handleAuth = async (type: 'login' | 'join') => {
     setLoading(true)
     
     const { error } = await supabase.auth.signInWithOtp({
-      email
+      email,
+      options: {
+        // This tells Supabase where to send them after they click the link
+        emailRedirectTo: window.location.origin, 
+      },
     })
 
-    if (error) {
-      alert(error.message)
+    if (!error) {
+      setMessage({ type, sent: true })
     } else {
-      setMessage('Check your email for the magic link!')
+      alert(error.message)
     }
     setLoading(false)
   }
 
+  // If the email was sent, show the "Success" state
+  if (message.sent) {
+    return (
+      <div className="auth-container">
+        <h2>{message.type === 'join' ? 'Welcome to the neighborhood!' : 'Welcome back!'}</h2>
+        <p>Check your email at <strong>{email}</strong> for a magic link to sign in.</p>
+        <button onClick={() => setMessage({ ...message, sent: false })}>Back</button>
+      </div>
+    )
+  }
+
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50">
-      <div className="p-8 bg-white shadow-xl rounded-2xl w-full max-w-md">
-        <h1 className="text-3xl font-bold mb-2 text-slate-800">Welcome</h1>
-        <p className="text-slate-500 mb-8">Enter your email to join the neighborhood.</p>
-        
-        {message ? (
-          <div className="p-4 bg-green-50 text-green-700 rounded-lg border border-green-200">
-            {message}
-          </div>
-        ) : (
-          <form onSubmit={handleLogin} className="space-y-4">
-            <input
-              type="email"
-              placeholder="your@email.com"
-              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-blue-600 text-white p-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50"
-            >
-              {loading ? 'Sending...' : 'Send Magic Link'}
-            </button>
-          </form>
-        )}
+    <div className="auth-container">
+      <h1>Neighborhood App</h1>
+      <input
+        type="email"
+        placeholder="your@email.com"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        disabled={loading}
+      />
+
+      <div className="button-group">
+        <button 
+          onClick={() => handleAuth('login')} 
+          disabled={loading || !email}
+        >
+          {loading ? 'Sending...' : 'Login'}
+        </button>
+
+        <button 
+          onClick={() => handleAuth('join')} 
+          className="secondary"
+          disabled={loading || !email}
+        >
+          {loading ? 'Sending...' : 'New? Join now'}
+        </button>
       </div>
     </div>
   )
