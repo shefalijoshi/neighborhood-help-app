@@ -706,17 +706,20 @@ export type Database = {
       requests: {
         Row: {
           created_at: string | null
-          dog_size: Database["public"]["Enums"]["dog_size"]
+          dog_name: string | null
+          dog_photo: string | null
+          dog_size: Database["public"]["Enums"]["dog_size"] | null
           duration: number
           expires_at: string
           full_address: string
+          help_detail_id: string | null
           id: string
           neighborhood_id: string
           seeker_id: string
           special_needs: string | null
           status: Database["public"]["Enums"]["request_status"] | null
           street_name: string
-          temperament: string[]
+          temperament: string[] | null
           timeframe: string | null
           updated_at: string | null
           walker_preference:
@@ -725,17 +728,20 @@ export type Database = {
         }
         Insert: {
           created_at?: string | null
-          dog_size: Database["public"]["Enums"]["dog_size"]
+          dog_name?: string | null
+          dog_photo?: string | null
+          dog_size?: Database["public"]["Enums"]["dog_size"] | null
           duration: number
           expires_at: string
           full_address: string
+          help_detail_id?: string | null
           id?: string
           neighborhood_id: string
           seeker_id: string
           special_needs?: string | null
           status?: Database["public"]["Enums"]["request_status"] | null
           street_name: string
-          temperament: string[]
+          temperament?: string[] | null
           timeframe?: string | null
           updated_at?: string | null
           walker_preference?:
@@ -744,17 +750,20 @@ export type Database = {
         }
         Update: {
           created_at?: string | null
-          dog_size?: Database["public"]["Enums"]["dog_size"]
+          dog_name?: string | null
+          dog_photo?: string | null
+          dog_size?: Database["public"]["Enums"]["dog_size"] | null
           duration?: number
           expires_at?: string
           full_address?: string
+          help_detail_id?: string | null
           id?: string
           neighborhood_id?: string
           seeker_id?: string
           special_needs?: string | null
           status?: Database["public"]["Enums"]["request_status"] | null
           street_name?: string
-          temperament?: string[]
+          temperament?: string[] | null
           timeframe?: string | null
           updated_at?: string | null
           walker_preference?:
@@ -762,6 +771,13 @@ export type Database = {
             | null
         }
         Relationships: [
+          {
+            foreignKeyName: "requests_help_detail_id_fkey"
+            columns: ["help_detail_id"]
+            isOneToOne: false
+            referencedRelation: "help_details"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "requests_neighborhood_id_fkey"
             columns: ["neighborhood_id"]
@@ -930,8 +946,19 @@ export type Database = {
         Args: { lat1: number; lat2: number; lng1: number; lng2: number }
         Returns: number
       }
+      create_walk_request: {
+        Args: {
+          p_duration: number
+          p_help_detail_id: string
+          p_scheduled_time?: string
+          p_timeframe_type: string
+          p_walker_preference?: Database["public"]["Enums"]["walker_preference"]
+        }
+        Returns: string
+      }
       generate_invite_code: { Args: never; Returns: string }
       generate_verification_code: { Args: never; Returns: string }
+      get_neighborhood_feed: { Args: never; Returns: Json }
       initialize_neighborhood: {
         Args: { neighborhood_name: string; user_lat: number; user_lng: number }
         Returns: string

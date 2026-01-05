@@ -18,6 +18,7 @@ import { Route as AuthAppRouteImport } from './routes/_auth._app'
 import { Route as AuthAppVouchRouteImport } from './routes/_auth._app.vouch'
 import { Route as AuthAppInviteRouteImport } from './routes/_auth._app.invite'
 import { Route as AuthAppDashboardRouteImport } from './routes/_auth._app.dashboard'
+import { Route as AuthAppCreateRequestRouteImport } from './routes/_auth._app.create-request'
 
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
@@ -62,12 +63,18 @@ const AuthAppDashboardRoute = AuthAppDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthAppRoute,
 } as any)
+const AuthAppCreateRequestRoute = AuthAppCreateRequestRouteImport.update({
+  id: '/create-request',
+  path: '/create-request',
+  getParentRoute: () => AuthAppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/create-profile': typeof AuthCreateProfileRoute
   '/vouch-pending': typeof AuthVouchPendingRoute
   '/': typeof AuthIndexRoute
+  '/create-request': typeof AuthAppCreateRequestRoute
   '/dashboard': typeof AuthAppDashboardRoute
   '/invite': typeof AuthAppInviteRoute
   '/vouch': typeof AuthAppVouchRoute
@@ -77,6 +84,7 @@ export interface FileRoutesByTo {
   '/create-profile': typeof AuthCreateProfileRoute
   '/vouch-pending': typeof AuthVouchPendingRoute
   '/': typeof AuthIndexRoute
+  '/create-request': typeof AuthAppCreateRequestRoute
   '/dashboard': typeof AuthAppDashboardRoute
   '/invite': typeof AuthAppInviteRoute
   '/vouch': typeof AuthAppVouchRoute
@@ -89,6 +97,7 @@ export interface FileRoutesById {
   '/_auth/create-profile': typeof AuthCreateProfileRoute
   '/_auth/vouch-pending': typeof AuthVouchPendingRoute
   '/_auth/': typeof AuthIndexRoute
+  '/_auth/_app/create-request': typeof AuthAppCreateRequestRoute
   '/_auth/_app/dashboard': typeof AuthAppDashboardRoute
   '/_auth/_app/invite': typeof AuthAppInviteRoute
   '/_auth/_app/vouch': typeof AuthAppVouchRoute
@@ -100,6 +109,7 @@ export interface FileRouteTypes {
     | '/create-profile'
     | '/vouch-pending'
     | '/'
+    | '/create-request'
     | '/dashboard'
     | '/invite'
     | '/vouch'
@@ -109,6 +119,7 @@ export interface FileRouteTypes {
     | '/create-profile'
     | '/vouch-pending'
     | '/'
+    | '/create-request'
     | '/dashboard'
     | '/invite'
     | '/vouch'
@@ -120,6 +131,7 @@ export interface FileRouteTypes {
     | '/_auth/create-profile'
     | '/_auth/vouch-pending'
     | '/_auth/'
+    | '/_auth/_app/create-request'
     | '/_auth/_app/dashboard'
     | '/_auth/_app/invite'
     | '/_auth/_app/vouch'
@@ -195,16 +207,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthAppDashboardRouteImport
       parentRoute: typeof AuthAppRoute
     }
+    '/_auth/_app/create-request': {
+      id: '/_auth/_app/create-request'
+      path: '/create-request'
+      fullPath: '/create-request'
+      preLoaderRoute: typeof AuthAppCreateRequestRouteImport
+      parentRoute: typeof AuthAppRoute
+    }
   }
 }
 
 interface AuthAppRouteChildren {
+  AuthAppCreateRequestRoute: typeof AuthAppCreateRequestRoute
   AuthAppDashboardRoute: typeof AuthAppDashboardRoute
   AuthAppInviteRoute: typeof AuthAppInviteRoute
   AuthAppVouchRoute: typeof AuthAppVouchRoute
 }
 
 const AuthAppRouteChildren: AuthAppRouteChildren = {
+  AuthAppCreateRequestRoute: AuthAppCreateRequestRoute,
   AuthAppDashboardRoute: AuthAppDashboardRoute,
   AuthAppInviteRoute: AuthAppInviteRoute,
   AuthAppVouchRoute: AuthAppVouchRoute,
