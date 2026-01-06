@@ -76,13 +76,6 @@ function CreateRequestComponent() {
   return (
     <div className="min-h-screen bg-[#F9F7F2] pb-20 pt-8 px-6">
       <div className="max-w-md mx-auto">
-        <header className="mb-8 text-center">
-          <h1 className="text-3xl font-serif text-[#2D2D2D] mb-2">Request a Walk</h1>
-          <p className="text-[#6B6658] text-sm italic">
-            Broadcast a request to your neighborhood.
-          </p>
-        </header>
-
         {/* 1. Selection: Help Details Cards */}
         <section className="mb-8">
           <label className="text-[10px] uppercase tracking-widest font-bold text-[#A09B8E] block mb-4 ml-1">

@@ -58,7 +58,7 @@ function AssistDetailComponent() {
 
   return (
     <div className="min-h-screen bg-[#F9F7F2] pb-20">
-      <div className="px-6 pt-8 max-w-md mx-auto">
+      <div className="max-w-md mx-auto">
         {/* Navigation - Matches Request Details */}
         <button 
           onClick={() => navigate({ to: '/dashboard' })}

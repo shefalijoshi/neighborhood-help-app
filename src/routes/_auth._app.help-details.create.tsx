@@ -62,7 +62,7 @@ function CreateHelpDetailComponent() {
   })
 
   return (
-    <div className="min-h-screen bg-[#F9F7F2] pb-20 pt-8 px-6">
+    <div className="min-h-screen bg-[#F9F7F2] pb-20">
       <div className="max-w-md mx-auto">
         <header className="mb-10 text-center">
           {/* Use the Dog Icon here for visual identity */}

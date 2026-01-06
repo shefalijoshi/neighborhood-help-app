@@ -53,7 +53,7 @@ function InvitePage() {
   }
 
   return (
-    <div className="min-h-[80vh] flex flex-col items-center justify-center p-6 bg-[#F9F7F2]">
+    <div className="min-h-[80vh] flex flex-col items-center bg-[#F9F7F2]">
       <div className="w-full max-w-sm text-center">
         
         {/* Artisan Header */}

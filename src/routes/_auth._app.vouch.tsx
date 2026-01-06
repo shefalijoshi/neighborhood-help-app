@@ -61,14 +61,13 @@ function VouchEntryPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F9F7F2] flex flex-col items-center justify-center p-6">
+    <div className="min-h-screen bg-[#F9F7F2] flex flex-col items-center">
       <div className="w-full max-w-sm">
-        
         <header className="text-center mb-10">
           <div className="inline-block px-3 py-1 bg-[#EBE7DE] rounded-full text-[10px] uppercase tracking-[0.2em] font-bold text-[#6B6658] mb-4">
             Security: Handshake
           </div>
-          <h1 className="text-3xl font-serif text-[#2D2D2D]">Vouch for Neighbor</h1>
+          <h2 className="text-3xl font-serif text-[#2D2D2D]">Vouch for Neighbor</h2>
         </header>
   
         {/* The Unified Artisan Card */}

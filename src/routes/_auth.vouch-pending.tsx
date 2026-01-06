@@ -165,7 +165,7 @@ function VouchPendingPage() {
   const isExpired = minutesRemaining === 0 || (!activeCode && !isLoading)
 
   return (
-    <div className="min-h-screen bg-[#F9F7F2] flex flex-col items-center justify-center p-6 text-center">
+    <div className="min-h-screen bg-[#F9F7F2] flex flex-col items-center text-center">
       <div className="w-full max-w-sm">
         
       <header className="mb-10">

@@ -42,7 +42,7 @@ function LoginComponent() {
   // If the email was sent, show the "Success" state
   if (message.sent) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-6 text-center">
+      <div className="min-h-screen flex items-center text-center">
         <div className="artisan-card p-10 max-w-md w-full animate-in fade-in zoom-in duration-500">
           <h2 className="text-3xl font-serif mb-4">Verification Sent</h2>
           <p className="text-[#6B6658] mb-8 leading-relaxed text-sm">
@@ -61,7 +61,7 @@ function LoginComponent() {
   }
   
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-6">
+    <div className="min-h-screen flex flex-col items-center">
       <div className="w-full max-w-sm">
         {/* Refined Header */}
         <header className="text-center mb-10">

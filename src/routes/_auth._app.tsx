@@ -1,20 +1,60 @@
-import { createFileRoute, Outlet, redirect } from '@tanstack/react-router'
+import { createFileRoute, Outlet, redirect, useRouteContext, Link } from '@tanstack/react-router'
+import { useQuery } from '@tanstack/react-query'
+import { supabase } from '../lib/supabase'
 
 export const Route = createFileRoute('/_auth/_app')({
   beforeLoad: ({ context }) => {
-    // If they aren't active, they cannot stay in the _app branch
     if (context.membershipStatus !== 'active') {
-      throw redirect({ to: '/' }) // Send back to Traffic Cop
+      throw redirect({ to: '/' })
     }
   },
-  component: () => (
-    <div className="app-layout">
-      {/* You can put your main Nav Bar here! */}
-      <nav>My Neighborhood App</nav> 
-      
-      <main>
-        <Outlet /> {/* This renders Dashboard, Settings, etc. */}
+  component: AppLayout
+})
+
+function AppLayout() {
+  const { profile } = useRouteContext({ from: '/_auth/_app' })
+
+  const { data: neighborhood } = useQuery({
+    queryKey: ['neighborhood', profile?.neighborhood_id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('neighborhoods')
+        .select('name')
+        .eq('id', profile?.neighborhood_id)
+        .single()
+      if (error) throw error
+      return data
+    },
+    enabled: !!profile?.neighborhood_id,
+  })
+
+  return (
+    <div className="min-h-screen bg-[#F9F7F2]">
+      <main className="max-w-4xl mx-auto px-6 pt-6">
+        {/* Global Identity Bar: Branding Left, Profile Right */}
+        <header className="mb-4 flex justify-between items-center">
+          <div className="flex items-center gap-3">
+            <h1 className="text-xl font-serif text-[#2D2D2D] tracking-tight">
+              {neighborhood?.name || 'Local Neighborhood'}
+            </h1>
+          </div>
+
+          <Link 
+            to="/profile" 
+            className="h-10 w-10 rounded-full border-2 border-[#EBE7DE] overflow-hidden bg-white shadow-sm hover:border-[#4A5D4E] transition-all flex items-center justify-center shrink-0"
+          >
+            {profile?.avatar_url ? (
+              <img src={profile.avatar_url} alt="Profile" className="h-full w-full object-cover" />
+            ) : (
+              <div className="h-full w-full flex items-center justify-center bg-[#F2F0E9] text-[#4A5D4E] font-bold text-xs uppercase">
+                {profile?.display_name?.charAt(0)}
+              </div>
+            )}
+          </Link>
+        </header>
+
+        <Outlet /> 
       </main>
     </div>
   )
-})
+}
