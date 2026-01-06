@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '../lib/supabase'
@@ -10,7 +10,10 @@ import {
   AlertCircle, 
   Phone, 
   Mail, 
-  CheckCircle2 
+  CheckCircle2, 
+  CircleQuestionMark,
+  CircleCheck,
+  CircleX
 } from 'lucide-react'
 import { format } from 'date-fns'
 
@@ -45,6 +48,43 @@ function RequestDetailComponent() {
     }
   })
 
+  useEffect(() => {
+    const channel = supabase
+      .channel('public:offers')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'offers' },
+        () => {
+          // Invalidate the feed query to trigger a refresh of the counts
+          queryClient.invalidateQueries({ queryKey: ['request_offers', 'my_offer'] })
+        }
+      )
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(channel)
+    }
+  }, [queryClient])
+
+  const isOwner = request?.seeker_id === profile?.id
+
+  const { data: offers, isLoading: offersLoading } = useQuery({
+    queryKey: ['request_offers', requestId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('offers')
+        .select(`
+          *,
+          profiles:helper_id(display_name)
+        `)
+        .eq('request_id', requestId)
+        .eq('status', 'pending')
+      if (error) throw error
+      return data
+    },
+    enabled: !!isOwner
+  })
+
   // --- Check for existing offer from this helper ---
   const { data: existingOffer, isLoading: offerLoading } = useQuery({
     queryKey: ['my_offer', requestId, profile?.id],
@@ -59,6 +99,22 @@ function RequestDetailComponent() {
       return data
     },
     enabled: !!profile?.id
+  })
+
+  const acceptOfferMutation = useMutation({
+    mutationFn: async (targetOfferId: string) => {
+      const { error } = await supabase.rpc('accept_neighborhood_offer', {
+        target_offer_id: targetOfferId
+      })
+      if (error) throw error
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['request', requestId] })
+      queryClient.invalidateQueries({ queryKey: ['request_offers', requestId] })
+      // Redirect to dashboard or a success view
+      navigate({ to: '/dashboard' })
+    },
+    onError: (err: any) => alert(err.message)
   })
 
   // --- Mutation: Submit Offer ---
@@ -87,7 +143,7 @@ function RequestDetailComponent() {
     onError: (err: any) => setError(err.message)
   })
 
-  if (requestLoading || offerLoading) {
+  if (requestLoading || offerLoading || (isOwner && offersLoading)) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#F9F7F2]">
         <div className="h-8 w-8 border-4 border-[#4A5D4E] border-t-transparent rounded-full animate-spin" />
@@ -97,7 +153,6 @@ function RequestDetailComponent() {
 
   if (!request) return <div className="p-8 text-center font-serif italic text-[#6B6658]">Request not found.</div>
 
-  const isOwner = request.seeker_id === profile?.id
   const isExpired = new Date(request.expires_at) < new Date()
   const isActive = request.status === 'active'
 
@@ -187,14 +242,62 @@ function RequestDetailComponent() {
           {/* Action Area */}
           <div className="mt-8">
             {isOwner ? (
-              <div className="text-center p-6 bg-[#F2F0E9]/50 rounded-3xl border border-dashed border-[#EBE7DE]">
-                <p className="text-[10px] text-[#A09B8E] uppercase tracking-widest font-bold">Your Request</p>
+              <div className="space-y-4">
+                <h3 className="text-[10px] uppercase tracking-[0.2em] font-bold text-[#A09B8E] px-2">
+                  Neighbors Available ({offers?.length || 0})
+                </h3>
+                {offers?.map((offer: any) => (
+                  <div key={offer.id} className="artisan-card p-5 bg-white border border-[#F2F0E9]">
+                    <div className="flex justify-between items-start mb-3">
+                      <div>
+                        <p className="font-serif text-[#2D2D2D] text-lg">{offer.profiles?.display_name}</p>
+                        <div className="flex gap-2 mt-1 opacity-40">
+                          {offer.share_phone && <Phone className="w-3 h-3" />}
+                          {offer.share_email && <Mail className="w-3 h-3" />}
+                        </div>
+                      </div>
+                      <button 
+                        disabled={acceptOfferMutation.isPending}
+                        onClick={() => acceptOfferMutation.mutate(offer.id)}
+                        className="px-4 py-2 bg-[#4A5D4E] text-white text-[10px] font-bold uppercase tracking-widest rounded-full hover:bg-[#3d4d40] transition-colors flex items-center gap-2"
+                      >
+                        {acceptOfferMutation.isPending ? 'Accepting...' : 'Accept'}
+                      </button>
+                    </div>
+                    {offer.note && (
+                      <p className="text-xs italic text-[#6B6658] bg-[#F9F7F2] p-3 rounded-xl">"{offer.note}"</p>
+                    )}
+                  </div>
+                ))}
+                {offers?.length === 0 && (
+                  <div className="text-center p-8 bg-[#F2F0E9]/50 rounded-3xl border border-dashed border-[#EBE7DE]">
+                    <p className="text-[10px] text-[#A09B8E] uppercase tracking-widest font-bold">Waiting for neighbors...</p>
+                  </div>
+                )}
               </div>
             ) : existingOffer ? (
               <div className="artisan-card p-8 bg-[#4A5D4E] text-center shadow-lg shadow-[#4A5D4E]/20">
-                <CheckCircle2 className="w-8 h-8 text-white/50 mx-auto mb-3" />
-                <h3 className="font-serif text-white text-lg mb-1">Offer Pending</h3>
-                <p className="text-white/70 text-xs">Waiting for the owner to respond.</p>
+                {existingOffer.status === 'pending' && (
+                  <>
+                    <CircleQuestionMark className="w-8 h-8 text-white/50 mx-auto mb-3" />
+                    <h3 className="font-serif text-white text-lg mb-1">Offer Pending</h3>
+                    <p className="text-white/70 text-xs">Waiting for a response.</p>
+                  </>
+                )}
+                {existingOffer.status === 'accepted' && (
+                  <>
+                    <CircleCheck className="w-8 h-8 text-white/50 mx-auto mb-3" />
+                    <h3 className="font-serif text-white text-lg mb-1">Offer accepted</h3>
+                    <p className="text-white/70 text-xs">Enjoy assisting your neighbor!</p>
+                  </>
+                )}
+                {existingOffer.status === 'declined' && (
+                <>
+                    <CircleX className="w-8 h-8 text-white/50 mx-auto mb-3" />
+                    <h3 className="font-serif text-white text-lg mb-1">Offer declined</h3>
+                    <p className="text-white/70 text-xs">Someone else is assisting your neighbor.</p>
+                </>
+                )}
               </div>
             ) : !isActive || isExpired ? (
               <div className="text-center p-6 bg-[#F2F0E9] rounded-3xl">
