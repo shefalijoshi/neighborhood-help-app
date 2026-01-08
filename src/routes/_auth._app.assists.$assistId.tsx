@@ -62,10 +62,10 @@ function AssistDetailComponent() {
         {/* Navigation */}
         <button 
           onClick={() => navigate({ to: '/dashboard' })}
-          className="flex items-center gap-2 text-brand-muted hover:text-brand-green transition-colors mb-6 group"
+          className="nav-link-back"
         >
-          <ChevronLeft className="w-5 h-5 transition-transform group-hover:-translate-x-1" />
-          <span className="text-label">Back to Feed</span>
+          <ChevronLeft className="w-4 h-4" />
+          <span>Back to Dashboard</span>
         </button>
 
         {/* Hero Header */}

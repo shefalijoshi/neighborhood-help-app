@@ -162,10 +162,10 @@ function RequestDetailComponent() {
         {/* Navigation */}
         <button 
           onClick={() => navigate({ to: '/dashboard' })}
-          className="flex items-center gap-2 text-[#A09B8E] hover:text-[#4A5D4E] transition-colors mb-6"
+          className="nav-link-back"
         >
-          <ChevronLeft className="w-5 h-5" />
-          <span className="text-[10px] uppercase tracking-widest font-bold">Back to Feed</span>
+          <ChevronLeft className="w-4 h-4" />
+          <span>Back to Dashboard</span>
         </button>
 
         {/* Dog Profile Hero */}

@@ -42,7 +42,7 @@ function AppLayout() {
           </div>
 
           <Link 
-            to="/profile" 
+            to="/profile-details" 
             className="h-10 w-10 rounded-full border-2 border-[#EBE7DE] overflow-hidden bg-white shadow-sm hover:border-[#4A5D4E] transition-all flex items-center justify-center shrink-0"
           >
             {profile?.avatar_url ? (
