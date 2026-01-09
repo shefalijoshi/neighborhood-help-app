@@ -84,9 +84,7 @@ function AssistDetailComponent() {
               {assist.dog_size}
             </p>
             <div className="flex items-center gap-1 px-1.5 py-0.5 bg-brand-terracotta text-white rounded-full">
-              <span className={`capitalize ${
-                assist.status === 'in_progress' ? 'bg-orange-100 text-orange-700' : ''
-              }`}>
+              <span className="capitalize">
                 {assist.status.replace('_', ' ')}{isHelper ? ` with ${assist.seeker_name}` : ` with ${assist.helper_name}`}
               </span>
             </div>
