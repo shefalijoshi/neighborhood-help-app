@@ -175,7 +175,7 @@ function RequestDetailComponent() {
               {request.dog_photo ? (
                 <img src={request.dog_photo} alt={request.dog_name} className="h-full w-full object-cover" />
               ) : (
-                <Dog className="w-10 h-10 text-[#EBE7DE]" />
+                <Dog className="w-10 h-10 text-brand-stone" />
               )}
             </div>
           </div>
