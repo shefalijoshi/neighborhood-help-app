@@ -2,7 +2,9 @@ import { useState, useEffect } from 'react'
 import { createFileRoute, useRouter, redirect } from '@tanstack/react-router'
 import { supabase } from '../lib/supabase'
 import { useQueryClient } from '@tanstack/react-query'
-import { getCoordsFromAddress, type GeocodingResult } from '../lib/geocoding'
+import { getCoordsFromAddress } from '../lib/geocoding'
+import { User, MapPin, ShieldCheck, Key, Home } from 'lucide-react'
+import { PasscodeInput } from '../components/PasscodeInput'
 
 export const Route = createFileRoute('/_auth/create-profile')({
   beforeLoad: ({ context }) => {
@@ -34,10 +36,8 @@ function CreateProfileComponent() {
       setCoords(null);
       return;
     }
-  
     const controller = new AbortController();
     setIsValidatingLocation(true);
-  
     const delayDebounceFn = setTimeout(async () => {
       try {
         const result = await getCoordsFromAddress(address, controller.signal);
@@ -50,10 +50,9 @@ function CreateProfileComponent() {
         setIsValidatingLocation(false);
       }
     }, 600);
-  
     return () => {
       clearTimeout(delayDebounceFn);
-      controller.abort(); // Cancels the fetch if user types again
+      controller.abort();
     };
   }, [address]);
 
@@ -61,12 +60,8 @@ function CreateProfileComponent() {
     const { data: { user } } = await supabase.auth.getUser();
     const { error } = await supabase
       .from('profiles')
-      .update({ 
-        display_name: name, 
-        address: address // This ensures the latest address is saved
-      })
+      .update({ display_name: name, address: address })
       .eq('user_id', user?.id);
-    
     if (error) throw error;
   };
 
@@ -74,11 +69,10 @@ function CreateProfileComponent() {
     if (!inviteCode || !coords) return
     setStep('executing')
     setError(null)
-
     try {
       await updateProfile();
       const { error: rpcError } = await supabase.rpc('join_neighborhood', {
-        invite_code_text: inviteCode.trim().toUpperCase(),
+        invite_code_text: inviteCode.trim(),
         user_lat: coords.lat,
         user_lng: coords.lng
       })
@@ -96,7 +90,6 @@ function CreateProfileComponent() {
     if (!name || !neighborhoodName || !coords || !address) return
     setStep('executing')
     setError(null)
-
     try {
       await updateProfile();
       const { error: rpcError } = await supabase.rpc('initialize_neighborhood', {
@@ -104,7 +97,6 @@ function CreateProfileComponent() {
         user_lat: coords.lat,
         user_lng: coords.lng
       })
-
       if (rpcError) {
         if (rpcError.message.includes('COLLISION')) {
           setError(rpcError.message.replace('COLLISION:', ''))
@@ -115,7 +107,6 @@ function CreateProfileComponent() {
         setStep('choice')
         return
       }
-
       await queryClient.invalidateQueries()
       await router.invalidate()
       window.location.replace('/')
@@ -127,35 +118,35 @@ function CreateProfileComponent() {
 
   return (
     <div className="artisan-page-focus pt-12 pb-20 px-6">
-      <div className="w-full max-w-md">
+      <div className="artisan-container-sm">
         
         {error && (
-          <div className="alert-error mb-8 animate-in duration-300">
-            <div className="flex items-center justify-center gap-2">
-              <span className="alert-title mb-0">{error}</span>
-            </div>
+          <div className="alert-error mb-8 animate-in border-dashed">
+            <span className="alert-title mb-0">{error}</span>
           </div>
         )}
 
         {step === 'name' && (
           <div className="animate-in slide-in-from-bottom-4 duration-700">
             <header className="artisan-header">
-              <div className="badge-pill mb-4">
-                {profile?.display_name ? 'Identity Confirmation' : 'Step 01 — Identity'}
+              <div className="badge-pill mb-4 tracking-widest">
+                Step 01 — Identity
               </div>
-              <h1 className="artisan-header-title">
-                {profile?.display_name ? 'Confirm Profile' : 'Resident Profile'}
-              </h1>
+              <h1 className="artisan-header-title">Resident Profile</h1>
               <p className="artisan-header-description">
-                {profile?.display_name 
-                  ? 'Review your details before proceeding to your neighborhood.' 
-                  : 'Please provide your details as they should appear to your neighbors.'}
+                Please provide your details as they should appear to your neighbors.
               </p>
             </header>
 
             <div className="artisan-card">
-              <div className="artisan-card-inner space-y-8">
-                <div>
+              <div className="artisan-card-inner space-y-6 text-left">
+                
+                {/* Name Input Group */}
+                <div className="detail-row border-b-0 pb-0 items-start">
+                  <div className="icon-box">
+                    <User className="w-4 h-4 text-brand-green" />
+                  </div>
+                  <div className="flex-1">
                   <label className="text-label block mb-3 ml-1">Full Name</label>
                   <input
                     className="artisan-input text-sm"
@@ -163,38 +154,46 @@ function CreateProfileComponent() {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                   />
+                  </div>
                 </div>
 
-                <div>
-                  <label className="text-label block mb-3 ml-1">Residential Address</label>
-                  <div className="input-adornment-wrapper">
-                    <input
-                      className={`artisan-input text-sm pr-12 transition-all duration-500 ${
-                        coords ? 'border-brand-green/40 bg-brand-stone/40' : ''
-                      }`}
-                      placeholder="Search your street address..."
-                      value={address}
-                      onChange={(e) => setAddress(e.target.value)}
-                    />
-                    <div className="input-adornment-right">
-                      {isValidatingLocation && (
-                        <div className="h-4 w-4 border-2 border-brand-green border-t-transparent rounded-full animate-spin" />
-                      )}
-                      {coords && !isValidatingLocation && (
-                        <div className="text-brand-green animate-in zoom-in duration-300">
-                          <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-                          </svg>
-                        </div>
-                      )}
+                {/* Address Input Group */}
+                <div className="detail-row border-b-0 items-start">
+                  <div className="icon-box">
+                    <MapPin className="w-4 h-4 text-brand-green" />
+                  </div>
+                  <div className="flex-1">
+                  <label className="text-label block mb-3 ml-1">Residential Address</label>                    <div className="input-adornment-wrapper">
+                      <input
+                        className={`artisan-input text-sm pr-12 transition-all duration-500 ${
+                          coords ? 'border-brand-green/40 bg-brand-stone' : ''
+                        }`}
+                        placeholder="Search your street address..."
+                        value={address}
+                        onChange={(e) => setAddress(e.target.value)}
+                      />
+                      <div className="input-adornment-right">
+                        {isValidatingLocation && (
+                          <div className="h-4 w-4 border-2 border-brand-green border-t-transparent rounded-full animate-spin" />
+                        )}
+                        {coords && !isValidatingLocation && (
+                          <div className="text-brand-green animate-in zoom-in">
+                            <ShieldCheck className="w-5 h-5" />
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
-                  {coords && (
-                    <p className="text-verified animate-in slide-in-from-left-2">
-                      Location Verified
-                    </p>
-                  )}
                 </div>
+
+                {coords && (
+                  <div className="flex justify-center animate-in slide-in-from-top-2">
+                    <div className="badge-pill border border-brand-green/20 text-brand-green py-1.5 flex items-center gap-2">
+                      <ShieldCheck className="w-3.5 h-3.5" />
+                      <span className="alert-meta-tiny">Location Verified</span>
+                    </div>
+                  </div>
+                )}
 
                 <div className="pt-2">
                   <button 
@@ -202,7 +201,7 @@ function CreateProfileComponent() {
                     disabled={name.length < 2 || !coords || isValidatingLocation}
                     className="btn-primary"
                   >
-                    {profile?.display_name ? 'Confirm & Continue' : 'Continue to Access'}
+                    Continue to Access
                   </button>
                 </div>
               </div>
@@ -211,55 +210,57 @@ function CreateProfileComponent() {
         )}
 
         {step === 'choice' && (
-          <div className="animate-in slide-in-from-bottom-4 duration-700">
+          <div className="animate-in slide-in-from-bottom-4 duration-700 text-center">
             <header className="artisan-header">
-              <div className="badge-pill mb-4">Step 02 — Access</div>
-              <h2 className="artisan-header-title">Welcome, {name.split(' ')[0]}</h2>
+              <div className="badge-pill mb-4 tracking-widest">Step 02 — Access</div>
+              <h2 className="artisan-header-title text-2xl">Welcome, {name.split(' ')[0]}</h2>
               <p className="artisan-header-description">Select your neighborhood entry method.</p>
             </header>
 
-            <div className="grid gap-5">
+            <div className="grid gap-5 text-left">
               <button 
                 onClick={() => setMethod('join')}
-                className={`artisan-card text-left transition-all border-2 ${
+                className={`artisan-card transition-all border-2 ${
                   method === 'join' ? 'border-brand-green' : 'border-transparent'
                 }`}
               >
                 <div className="p-6">
                   <div className="flex items-center gap-4 mb-3">
                     <div className="icon-box text-brand-green">
-                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" /></svg>
+                      <Key className="w-4 h-4" />
                     </div>
-                    <h3 className="artisan-card-title text-xl">Join Existing</h3>
+                    <h3 className="artisan-card-title text-lg">Join Existing</h3>
                   </div>
-                  <p className="artisan-meta-tiny">I have been provided an invite code by a neighbor.</p>
+                  <p className="artisan-meta-tiny leading-relaxed">I have been provided an invite code by a neighbor.</p>
                   {method === 'join' && (
-                    <div className="mt-4 pt-4 border-t border-brand-stone animate-in zoom-in">
-                      <input
-                        className="artisan-input text-lg tracking-[0.3em] uppercase placeholder:tracking-normal"
-                        placeholder="Invite Code"
-                        value={inviteCode}
-                        onChange={(e) => setInviteCode(e.target.value.toUpperCase())}
-                      />
-                    </div>
-                  )}
-                </div>
+                  <div className="mt-4 pt-4 border-t border-brand-stone animate-in zoom-in">
+                    {/* Label for context */}
+                        <label className="text-label block mb-4 text-center">Enter 6-Digit Invite Code</label>
+                        
+                        {/* Reusing the specialized component */}
+                        <PasscodeInput 
+                          value={inviteCode} 
+                          onChange={setInviteCode} 
+                        />
+                      </div>
+                    )}
+                  </div>
               </button>
 
               <button 
                 onClick={() => setMethod('create')}
-                className={`artisan-card text-left transition-all border-2 ${
+                className={`artisan-card transition-all border-2 ${
                   method === 'create' ? 'border-brand-terracotta' : 'border-transparent'
                 }`}
               >
                 <div className="p-6">
                   <div className="flex items-center gap-4 mb-3">
-                    <div className="icon-box text-brand-terracotta bg-brand-terracotta/5">
-                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>
+                    <div className="icon-box text-brand-terracotta bg-brand-terracotta/5 border-brand-terracotta/20">
+                      <Home className="w-4 h-4" />
                     </div>
-                    <h3 className="artisan-card-title text-xl">Establish New</h3>
+                    <h3 className="artisan-card-title text-lg">Establish New</h3>
                   </div>
-                  <p className="artisan-meta-tiny">I am the first resident in this area to register.</p>
+                  <p className="artisan-meta-tiny leading-relaxed">I am the first resident in this area to register.</p>
                   {method === 'create' && (
                     <div className="mt-4 pt-4 border-t border-brand-terracotta/10 animate-in zoom-in">
                       <input
@@ -289,13 +290,13 @@ function CreateProfileComponent() {
         {step === 'executing' && (
           <div className="loading-focus-state">
             <div className="spinner-brand" />
-            <h3 className="artisan-card-title text-xl text-center">Securing Profile</h3>
-            <p className="artisan-header-description mt-2">Connecting to your neighborhood...</p>
+            <h3 className="artisan-header-title text-xl">Securing Profile</h3>
+            <p className="artisan-header-description">Connecting to your neighborhood...</p>
           </div>
         )}
 
         <footer className="mt-12 text-center mb-8">
-          <p className="text-brand-muted mt-4">
+          <p className="text-brand-muted">
             Verified Residents Only
           </p>
         </footer>
