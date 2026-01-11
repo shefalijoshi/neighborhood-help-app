@@ -97,6 +97,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "assists_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "view_assist_details"
+            referencedColumns: ["request_id"]
+          },
+          {
             foreignKeyName: "assists_seeker_id_fkey"
             columns: ["seeker_id"]
             isOneToOne: false
@@ -192,7 +199,6 @@ export type Database = {
           dog_size: Database["public"]["Enums"]["dog_size"] | null
           id: string
           name: string
-          photo_url: string | null
           seeker_id: string
           special_needs: string | null
           temperament: string[] | null
@@ -203,7 +209,6 @@ export type Database = {
           dog_size?: Database["public"]["Enums"]["dog_size"] | null
           id?: string
           name: string
-          photo_url?: string | null
           seeker_id: string
           special_needs?: string | null
           temperament?: string[] | null
@@ -214,7 +219,6 @@ export type Database = {
           dog_size?: Database["public"]["Enums"]["dog_size"] | null
           id?: string
           name?: string
-          photo_url?: string | null
           seeker_id?: string
           special_needs?: string | null
           temperament?: string[] | null
@@ -646,6 +650,13 @@ export type Database = {
             referencedRelation: "requests"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "offers_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "view_assist_details"
+            referencedColumns: ["request_id"]
+          },
         ]
       }
       profiles: {
@@ -712,70 +723,64 @@ export type Database = {
       }
       requests: {
         Row: {
+          action_id: string
+          category_id: string
           created_at: string | null
-          dog_name: string | null
-          dog_photo: string | null
-          dog_size: Database["public"]["Enums"]["dog_size"] | null
+          details: string | null
           duration: number
           expires_at: string
           full_address: string
           help_detail_id: string | null
           id: string
           neighborhood_id: string
+          request_type: string
           seeker_id: string
-          special_needs: string | null
+          snapshot_data: Json | null
           status: Database["public"]["Enums"]["request_status"] | null
           street_name: string
-          temperament: string[] | null
+          subject_tag: string | null
           timeframe: string | null
           updated_at: string | null
-          walker_preference:
-            | Database["public"]["Enums"]["walker_preference"]
-            | null
         }
         Insert: {
+          action_id: string
+          category_id: string
           created_at?: string | null
-          dog_name?: string | null
-          dog_photo?: string | null
-          dog_size?: Database["public"]["Enums"]["dog_size"] | null
+          details?: string | null
           duration: number
           expires_at: string
           full_address: string
           help_detail_id?: string | null
           id?: string
           neighborhood_id: string
+          request_type: string
           seeker_id: string
-          special_needs?: string | null
+          snapshot_data?: Json | null
           status?: Database["public"]["Enums"]["request_status"] | null
           street_name: string
-          temperament?: string[] | null
+          subject_tag?: string | null
           timeframe?: string | null
           updated_at?: string | null
-          walker_preference?:
-            | Database["public"]["Enums"]["walker_preference"]
-            | null
         }
         Update: {
+          action_id?: string
+          category_id?: string
           created_at?: string | null
-          dog_name?: string | null
-          dog_photo?: string | null
-          dog_size?: Database["public"]["Enums"]["dog_size"] | null
+          details?: string | null
           duration?: number
           expires_at?: string
           full_address?: string
           help_detail_id?: string | null
           id?: string
           neighborhood_id?: string
+          request_type?: string
           seeker_id?: string
-          special_needs?: string | null
+          snapshot_data?: Json | null
           status?: Database["public"]["Enums"]["request_status"] | null
           street_name?: string
-          temperament?: string[] | null
+          subject_tag?: string | null
           timeframe?: string | null
           updated_at?: string | null
-          walker_preference?:
-            | Database["public"]["Enums"]["walker_preference"]
-            | null
         }
         Relationships: [
           {
@@ -945,25 +950,26 @@ export type Database = {
       }
       view_assist_details: {
         Row: {
+          action_id: string | null
+          category_id: string | null
+          completed_at: string | null
           created_at: string | null
-          dog_name: string | null
-          dog_photo: string | null
-          dog_size: Database["public"]["Enums"]["dog_size"] | null
-          duration: number | null
-          helper_email: string | null
+          details: string | null
+          expected_duration: number | null
           helper_id: string | null
           helper_name: string | null
           helper_phone: string | null
           id: string | null
           request_id: string | null
-          seeker_email: string | null
-          seeker_full_address: string | null
+          request_type: string | null
+          scheduled_time: string | null
+          seeker_address: string | null
           seeker_id: string | null
           seeker_name: string | null
-          seeker_street_name: string | null
-          special_needs: string | null
+          snapshot_data: Json | null
+          started_at: string | null
           status: Database["public"]["Enums"]["assist_status"] | null
-          temperament: string[] | null
+          subject_tag: string | null
           verification_code: string | null
         }
         Relationships: [
@@ -989,28 +995,21 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "assists_request_id_fkey"
-            columns: ["request_id"]
-            isOneToOne: false
-            referencedRelation: "requests"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "assists_seeker_id_fkey"
+            foreignKeyName: "requests_seeker_id_fkey"
             columns: ["seeker_id"]
             isOneToOne: false
             referencedRelation: "profile_details"
             referencedColumns: ["profile_id"]
           },
           {
-            foreignKeyName: "assists_seeker_id_fkey"
+            foreignKeyName: "requests_seeker_id_fkey"
             columns: ["seeker_id"]
             isOneToOne: false
             referencedRelation: "profile_with_stats"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "assists_seeker_id_fkey"
+            foreignKeyName: "requests_seeker_id_fkey"
             columns: ["seeker_id"]
             isOneToOne: false
             referencedRelation: "profiles"
@@ -1029,6 +1028,19 @@ export type Database = {
         Returns: number
       }
       complete_assist: { Args: { p_assist_id: string }; Returns: undefined }
+      create_neighborhood_request: {
+        Args: {
+          p_action_id: string
+          p_category_id: string
+          p_details: string
+          p_duration: number
+          p_help_detail_id?: string
+          p_request_type: string
+          p_scheduled_time?: string
+          p_subject_tag: string
+        }
+        Returns: string
+      }
       create_walk_request: {
         Args: {
           p_duration: number
@@ -1044,6 +1056,20 @@ export type Database = {
       get_assist_details: { Args: { t_assist_id: string }; Returns: Json }
       get_my_profile_id: { Args: never; Returns: string }
       get_neighborhood_feed: { Args: never; Returns: Json }
+      get_profile_details: {
+        Args: { target_id: string }
+        Returns: {
+          address: string
+          display_name: string
+          email: string
+          phone: string
+          role: Database["public"]["Enums"]["user_role"]
+        }[]
+      }
+      get_user_email_by_profile: {
+        Args: { target_id: string }
+        Returns: string
+      }
       initialize_neighborhood: {
         Args: { neighborhood_name: string; user_lat: number; user_lng: number }
         Returns: string

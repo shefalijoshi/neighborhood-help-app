@@ -1,16 +1,28 @@
 import { useState } from 'react'
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { createFileRoute, useNavigate, useSearch } from '@tanstack/react-router'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '../lib/supabase'
 import { Dog, Info, Plus, X } from 'lucide-react'
 
+type RequestSearchParams = {
+  categoryId?: string;
+  actionId?: string;
+};
+
 export const Route = createFileRoute('/_auth/_app/help-details/create')({
+  validateSearch: (search: Record<string, unknown>): RequestSearchParams => {
+    return {
+      categoryId: search.categoryId as string,
+      actionId: search.actionId as string,
+    };
+  },
   component: CreateHelpDetailComponent,
 })
 
 function CreateHelpDetailComponent() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
+  const search = useSearch({ from: '/_auth/_app/help-details/create' });
 
   const [name, setName] = useState('')
   const [size, setSize] = useState<'small' | 'medium' | 'large' | 'giant'>('medium')
@@ -56,7 +68,12 @@ function CreateHelpDetailComponent() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['help_details'] })
-      navigate({ to: '/create-request' })
+      navigate({ 
+        to: search.returnTo ? search.returnTo : '/create-request', 
+        search: { 
+          categoryId: search.categoryId, 
+          actionId: search.actionId 
+        }  })
     },
     onError: (err: any) => setError(err.message)
   })
@@ -174,7 +191,13 @@ function CreateHelpDetailComponent() {
           </button>
           
           <button 
-            onClick={() => navigate({ to: '/create-request' })}
+            onClick={() => navigate({ 
+              to: search.returnTo ? search.returnTo : '/create-request', 
+              search: { 
+                categoryId: search.categoryId, 
+                actionId: search.actionId 
+              } 
+            })}
             className="nav-link-back w-full justify-center"
           >
             Cancel

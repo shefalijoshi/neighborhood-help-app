@@ -1,0 +1,41 @@
+import type { Category } from '../lib/categoryIntent'
+import { CATEGORY_INTENT } from '../lib/categoryIntent'
+
+interface CategoryGridProps {
+  onSelect: (category: Category) => void
+}
+
+export function CategoryGrid({ onSelect }: CategoryGridProps) {
+  return (
+    <div className="animate-in mx-auto">
+      <div className="mb-4 text-center">
+        <h1 className="text-label mb-2">
+          How can neighbors help?
+        </h1>
+        <p className="text-brand-text italic">
+          Select a category to start your request.
+        </p>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        {CATEGORY_INTENT.map((cat) => (
+          <button
+            key={cat.id}
+            onClick={() => onSelect(cat)}
+            className="artisan-card group active:scale-95 transition-transform cursor-pointer"
+          >
+            <div className="artisan-card-inner flex flex-col items-center justify-center">
+              <div className={`icon-box mb-2 transition-transform group-hover:scale-110 ${cat.color} border-none text-white shadow-md`}>
+                <cat.icon className="w-6 h-6" />
+              </div>
+              
+              <span className="artisan-card-title text-center leading-tight">
+                {cat.label}
+              </span>
+            </div>
+          </button>
+        ))}
+      </div>
+    </div>
+  )
+}

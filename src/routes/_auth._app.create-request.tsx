@@ -1,235 +1,233 @@
-import { useState } from 'react'
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { supabase } from '../lib/supabase'
-import { format, addMinutes } from 'date-fns'
-import { Plus, Lock } from 'lucide-react'
+import { useState } from 'react';
+import { createFileRoute, useNavigate, useSearch } from '@tanstack/react-router';
+import { useQuery, useMutation } from '@tanstack/react-query';
+import { supabase } from '../lib/supabase';
+import { CategoryGrid } from '../components/CategoryGrid';
+import { ActionSelector } from '../components/ActionSelector';
+import { PetPicker } from '../components/PetPicker';
+import { ServiceDurationField } from '../components/ServiceDurationField';
+import { ItemDurationField } from '../components/ItemDurationField';
+import type { Category, Action } from '../lib/categoryIntent';
+import { CATEGORY_INTENT } from '../lib/categoryIntent';
+import { ChevronLeft, Send, Clock, Loader2 } from 'lucide-react';
+
+type RequestSearchParams = {
+  categoryId?: string | undefined;
+  actionId?: string | undefined;
+};
 
 export const Route = createFileRoute('/_auth/_app/create-request')({
-  component: CreateRequestComponent,
-})
+  validateSearch: (search: Record<string, unknown>): RequestSearchParams => {
+    return {
+      categoryId: search.categoryId as string,
+      actionId: search.actionId as string,
+    };
+  },
+  component: CreateRequestPage,
+});
 
-function CreateRequestComponent() {
-  const { profile } = Route.useRouteContext()
-  const navigate = useNavigate()
-  const queryClient = useQueryClient()
+function CreateRequestPage() {
+  const navigate = useNavigate();
+  const search = useSearch({ from: '/_auth/_app/create-request' });
+  const { categoryId, actionId } = search;
 
-  const [selectedDogId, setSelectedDogId] = useState<string | null>(null)
-  const [duration, setDuration] = useState<15 | 30 | 45 | 60>(30)
-  const [timeframe, setTimeframe] = useState<'now' | 'scheduled'>('now')
-  const [scheduledTime, setScheduledTime] = useState<string>('')
-  const [walkerPref, setWalkerPref] = useState<'no_preference' | 'prefers_male' | 'prefers_female'>('no_preference')
-  const [error, setError] = useState<string | null>(null)
+  // Selection State
+  const selectedCategory = CATEGORY_INTENT.find((c) => c.id === categoryId) || null;
+  let selectedAction = selectedCategory?.actions.find((a) => a.id === actionId) || null;
+  
+  if (!selectedAction && actionId) {
+    if (actionId === 'custom_service') {
+      selectedAction = {
+        id: 'custom_service',
+        label: 'Custom Service',
+        type: 'service',
+        tag: 'Custom'
+      };
+    } else if (actionId === 'custom_item') {
+      selectedAction = {
+        id: 'custom_item',
+        label: 'Custom Item',
+        type: 'item',
+        tag: 'Custom'
+      };
+    }
+  }
 
-  const { data: helpDetails, isLoading } = useQuery({
-    queryKey: ['help_details', profile?.id],
+  // Form State
+  const [petId, setPetId] = useState<string | null>(null);
+  const [timeframe, setTimeframe] = useState<'now' | 'scheduled'>('now'); // Minutes
+  const [duration, setDuration] = useState<number>(30); // Minutes
+  const [scheduledTime, setScheduledTime] = useState<string>('');
+  const [note, setNote] = useState('');
+
+  // 1. Fetch Pets (help_details) for the PetPicker
+  const { data: pets } = useQuery({
+    queryKey: ['my_pets'],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('help_details')
-        .select('*')
-        .eq('seeker_id', profile?.id)
-      if (error) throw error
-      return data
+        .select('id, name');
+      if (error) throw error;
+      return data;
     },
-    enabled: !!profile?.id,
-  })
+  });
 
-  const getExpiryPreview = () => {
-    if (timeframe === 'now') return addMinutes(new Date(), 60)
-    if (scheduledTime) return addMinutes(new Date(scheduledTime), -10)
-    return addMinutes(new Date(), 60)
-  }
-
-  const createRequestMutation = useMutation({
+  // 2. The RPC Mutation
+  const createRequest = useMutation({
     mutationFn: async () => {
-      if (!selectedDogId) throw new Error("Please select a dog profile")
-      const { data, error } = await supabase.rpc('create_walk_request', {
-        p_help_detail_id: selectedDogId,
+      const { data, error } = await supabase.rpc('create_neighborhood_request', {
+        p_category_id: selectedCategory?.id,
+        p_action_id: selectedAction?.id,
+        p_request_type: selectedAction?.type,
+        p_subject_tag: selectedAction?.tag,
+        p_details: note,
         p_duration: duration,
-        p_timeframe_type: timeframe,
-        p_scheduled_time: timeframe === 'scheduled' ? new Date(scheduledTime).toISOString() : null,
-        p_walker_preference: walkerPref
-      })
-      if (error) throw error
-      return data
+        p_scheduled_time: scheduledTime,
+        p_help_detail_id: petId, // Pass null if category doesn't require it
+      });
+
+      if (error) throw error;
+      return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['requests'] })
-      navigate({ to: '/dashboard' })
+      navigate({ to: '/dashboard' });
     },
-    onError: (err: any) => setError(err.message)
-  })
+  });
 
-  if (isLoading) return <div className="p-8 text-center font-serif italic text-brand-text">Gathering neighborhood data...</div>
+  const handleCategorySelect = (cat: Category) => {
+    navigate({ search: { ...search, categoryId: cat.id } });
+  };
+
+  const handleActionSelect = (act: Action) => {
+    navigate({ search: { ...search, actionId: act.id } });
+  };
+
+  const handleBack = () => {
+    if (actionId) {
+      // Drop actionId, keep categoryId (Goes from Step 3 -> Step 2)
+      navigate({ search: { categoryId } });
+    } else {
+      // Drop everything (Goes from Step 2 -> Step 1)
+      navigate({ search: {} });
+    }
+  };
+
+  const step = !categoryId ? 1 : !actionId ? 2 : 3;
 
   return (
-    <div className="artisan-page-focus pt-8">
-      <div className="artisan-container-large">
-        {/* Dog Selection Section */}
-        <section className="mb-8 text-left">
-          <h2 className="text-label mb-4 ml-1">Who needs a walk?</h2>
-          {helpDetails && helpDetails.length > 0 ? (
-            <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
-              {helpDetails.map((dog) => (
-                <button
-                  key={dog.id}
-                  onClick={() => setSelectedDogId(dog.id)}
-                  className={`flex-shrink-0 w-32 artisan-card p-3 transition-all border-2 ${
-                    selectedDogId === dog.id 
-                      ? 'border-brand-green bg-white' 
-                      : 'border-transparent bg-white/50'
-                  }`}
-                >
-                  <div className="icon-box h-16 w-16 mx-auto mb-3">
-                    {dog.photo_url ? (
-                      <img src={dog.photo_url} alt={dog.name} className="h-full w-full object-cover" />
-                    ) : (
-                      <span className="text-xl">🐕</span>
-                    )}
-                  </div>
-                  <p className="artisan-card-title text-center">{dog.name}</p>
-                  <p className="artisan-meta-tiny text-center">{dog.dog_size}</p>
-                </button>
-              ))}
-              <button
-                onClick={() => navigate({ to: '/help-details/create' })}
-                className="flex-shrink-0 w-32 artisan-card p-3 border-2 border-dashed border-brand-border bg-transparent flex flex-col items-center justify-center gap-2 opacity-80 hover:opacity-100 transition-all"
-              >
-                <div className="icon-box h-10 w-10 border-dashed bg-transparent">
-                  <Plus className="w-5 h-5 text-brand-muted" />
-                </div>
-                <p className="text-label">Add New</p>
-              </button>
-            </div>
-          ) : (
-            <div className="alert-success border-2 border-dashed p-8">
-              <p className="alert-body italic opacity-80 mb-4">No dog profiles found on your registry.</p>
-              <button onClick={() => navigate({ to: '/help-details/create' })} className="text-label text-brand-green underline decoration-brand-green/30 underline-offset-4">
-                + Create a Profile
-              </button>
-            </div>
-          )}
-        </section>
+    <div className="artisan-page-focus py-2 px-4">
+      <div className="artisan-container-large mx-auto">
+        
+        {/* --- Level 1: Category Selection --- */}
+        {step === 1 && <CategoryGrid onSelect={handleCategorySelect} />}
 
-        {selectedDogId && (
-          <div className="space-y-6 animate-in text-left">
-            <div className="artisan-card p-6 bg-white">
-              {/* Duration Segmented Control */}
-              <div className="mb-8">
-                <label className="text-label block mb-4 ml-1">Duration</label>
-                <div className="flex gap-2">
-                  {[15, 30, 45, 60].map((m) => (
-                    <button
-                      key={m}
-                      onClick={() => setDuration(m as any)}
-                      className={`flex-1 py-3 rounded-xl transition-all border-2 ${
-                        duration === m 
-                          ? 'border-brand-green bg-brand-green text-white' 
-                          : 'border-brand-stone text-brand-text hover:border-brand-border'
-                      }`}
-                    >
-                      {m}m
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Timing Segmented Control */}
-              <div className="mb-8">
-                <label className="text-label block mb-4 ml-1">Timing</label>
-                <div className="grid grid-cols-2 gap-2 mb-4">
-                  <button 
-                    onClick={() => setTimeframe('now')} 
-                    className={`py-3 rounded-xl border-2 transition-all ${
-                      timeframe === 'now' ? 'border-brand-green bg-brand-green text-white' : 'border-brand-stone text-brand-text'
-                    }`}
-                  >
-                    As Soon As Possible
-                  </button>
-                  <button 
-                    onClick={() => setTimeframe('scheduled')} 
-                    className={`py-3 rounded-xl border-2 transition-all ${
-                      timeframe === 'scheduled' ? 'border-brand-green bg-brand-green text-white' : 'border-brand-stone text-brand-text'
-                    }`}
-                  >
-                    Schedule Later
-                  </button>
-                </div>
-                {timeframe === 'scheduled' && (
-                  <input 
-                    type="datetime-local" 
-                    className="artisan-input text-sm mt-2" 
-                    value={scheduledTime} 
-                    onChange={(e) => setScheduledTime(e.target.value)} 
-                  />
-                )}
-              </div>
-
-              {/* Selection Input */}
-              <div className="mb-8">
-                <label className="text-label block mb-4 ml-1">Walker Preference</label>
-                <div className="relative">
-                  <select 
-                    value={walkerPref} 
-                    onChange={(e) => setWalkerPref(e.target.value as any)} 
-                    className="artisan-input text-sm appearance-none bg-white"
-                  >
-                    <option value="no_preference">No Preference</option>
-                    <option value="prefers_male">Prefers Male Walkers</option>
-                    <option value="prefers_female">Prefers Female Walkers</option>
-                  </select>
-                  <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none opacity-40">
-                    <Plus className="w-4 h-4 rotate-45" />
-                  </div>
-                </div>
-              </div>
-
-              {/* Verified Address Row */}
-              <div className="artisan-card-inner py-4 px-5 flex items-center gap-3">
-                <div className="icon-box h-8 w-8 bg-white border-brand-border/60">
-                  <Lock className="w-4 h-4 text-brand-green" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-label text-sm mb-0.5">Pickup Address (Verified)</p>
-                  <p className="text-xs text-brand-dark truncate">{profile?.address}</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Submission Logic */}
-            <div className="pt-4 text-center">
-              <div className="mb-6">
-                <p className="alert-body italic font-normal tracking-wider opacity-80">
-                  This post will automatically disappear at <span className="text-brand-text not-italic">{format(getExpiryPreview(), 'p')}</span>
-                </p>
-              </div>
-              
-              <button 
-                disabled={createRequestMutation.isPending || (timeframe === 'scheduled' && !scheduledTime)} 
-                onClick={() => createRequestMutation.mutate()} 
-                className="btn-primary"
-              >
-                {createRequestMutation.isPending ? 'Broadcasting...' : 'Post to neighborhood'}
-              </button>
-              
-              <button 
-                onClick={() => navigate({ to: '/dashboard' })} 
-                className="nav-link-back w-full justify-center mt-6"
-              >
-                Cancel Request
-              </button>
-            </div>
-          </div>
+        {/* --- Level 2: Action Selection --- */}
+        {step === 2 && selectedCategory && (
+          <ActionSelector 
+            category={selectedCategory} 
+            onBack={handleBack} 
+            onSelect={handleActionSelect} 
+          />
         )}
 
-        {/* Error Messaging */}
-        {error && (
-          <div className="alert-error">
-            <span className="alert-title">Request Error</span>
-            <span className="alert-body">{error}</span>
+        {/* --- Level 3: Form Container (The Fork) --- */}
+        {step === 3 && selectedAction && (
+          <div className="space-y-2">
+            <button onClick={handleBack} className="nav-link-back">
+              <ChevronLeft className="w-4 h-4" /> Back to {selectedCategory?.label}
+            </button>
+
+            <header className="mb-6">
+              <h2 className="artisan-header-title text-left">{selectedAction.label}</h2>
+              <p className="text-brand-text italic">Neighbors will see your street name and request details.</p>
+            </header>
+
+            {/* PetPicker Logic */}
+            {selectedCategory?.requiresProfile && (
+              <PetPicker 
+                pets={pets || []} 
+                selectedId={petId} 
+                onSelect={(id) => setPetId(id)} 
+              />
+            )}
+
+            {/* Form Fork: TimingModule Logic */}
+            <div className="artisan-card p-4 bg-white space-y-2">
+              {selectedAction.type === 'service' ? (
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <Clock className="w-4 h-4 text-brand-green" />
+                    <label className="text-label">When?</label>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2 mb-4">
+                    <button 
+                      onClick={() => setTimeframe('now')} 
+                      className={`py-3 rounded-xl border-2 transition-all ${
+                        timeframe === 'now' ? 'border-brand-green bg-brand-green text-white' : 'border-brand-stone text-brand-text'
+                      }`}
+                    >
+                      As Soon As Possible
+                    </button>
+                    <button 
+                      onClick={() => setTimeframe('scheduled')} 
+                      className={`py-3 rounded-xl border-2 transition-all ${
+                        timeframe === 'scheduled' ? 'border-brand-green bg-brand-green text-white' : 'border-brand-stone text-brand-text'
+                      }`}
+                    >
+                      Schedule Later
+                    </button>
+                  </div>
+                  {timeframe === 'scheduled' && (
+                    <input 
+                    type="datetime-local" 
+                    className="artisan-input text-sm mt-2"
+                    value={scheduledTime}
+                    onChange={(e) => setScheduledTime(e.target.value)}
+                  />)}
+                  <ServiceDurationField value={duration} onChange={setDuration} />
+                </div>
+              ) : (
+                /* Item Fork: Derives duration from Date Range */
+                <ItemDurationField onDurationChange={(mins) => {
+                  setDuration(mins);
+                }} />
+              )}
+
+              <div className="space-y-2 mt-4">
+                <label className="text-label italic">Extra Details</label>
+                <textarea 
+                  maxLength={280}
+                  className="artisan-input min-h-[100px] resize-none"
+                  placeholder="e.g. 'I can drop it off' or 'The gate code is 1234'..."
+                  value={note}
+                  onChange={(e) => setNote(e.target.value)}
+                />
+              </div>
+
+              <div className="pt-4 text-center">
+                <button 
+                  onClick={() => createRequest.mutate()}
+                  disabled={createRequest.isPending || (selectedCategory?.requiresProfile && !petId)}
+                  className="btn-primary w-full flex justify-center items-center gap-2"
+                >
+                  {createRequest.isPending ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Send className="w-4 h-4" />
+                  )}
+                  Post to Neighborhood
+                </button>
+                <button 
+                  onClick={() => navigate({ to: '/dashboard' })} 
+                  className="nav-link-back w-full justify-center mt-6"
+                >
+                  Cancel Request
+                </button>
+              </div>
+            </div>
           </div>
         )}
       </div>
     </div>
-  )
+  );
 }

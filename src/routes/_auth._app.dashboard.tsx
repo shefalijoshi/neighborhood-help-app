@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '../lib/supabase'
-import { Dog, Clock, MapPin, PlusCircle, ShieldCheck, Hand, Code, Verified, CodeIcon, Pin, Check, ShieldAlert } from 'lucide-react'
+import { Dog, Clock, MapPin, PlusCircle, ShieldCheck, Hand, ShieldAlert } from 'lucide-react'
 import { format, isAfter } from 'date-fns'
 
 export const Route = createFileRoute('/_auth/_app/dashboard')({
