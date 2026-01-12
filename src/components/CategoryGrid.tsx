@@ -1,15 +1,21 @@
+import { ChevronLeft } from 'lucide-react'
 import type { Category } from '../lib/categoryIntent'
 import { CATEGORY_INTENT } from '../lib/categoryIntent'
 
 interface CategoryGridProps {
+  onBack: () => void
   onSelect: (category: Category) => void
 }
 
-export function CategoryGrid({ onSelect }: CategoryGridProps) {
+export function CategoryGrid({ onBack, onSelect }: CategoryGridProps) {
   return (
     <div className="animate-in mx-auto">
+      <button onClick={onBack} className="nav-link-back mb-6">
+        <ChevronLeft className="w-4 h-4" />
+        <span>Back to Dashboard</span>
+      </button>
       <div className="mb-4 text-center">
-        <h1 className="text-label mb-2">
+        <h1 className="artisan-header-title">
           How can neighbors help?
         </h1>
         <p className="text-brand-text italic">

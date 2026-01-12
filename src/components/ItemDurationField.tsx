@@ -2,12 +2,14 @@ import { useState, useEffect } from 'react';
 import { Calendar, Info } from 'lucide-react';
 
 interface ItemProps {
+  start: string | undefined;
+  end: string | undefined;
   onDurationChange: (mins: number) => void;
 }
 
-export function ItemDurationField({ onDurationChange }: ItemProps) {
-  const [pickup, setPickup] = useState('');
-  const [returnDate, setReturnDate] = useState('');
+export function ItemDurationField({ start, end, onDurationChange }: ItemProps) {
+  const [pickup, setPickup] = useState(start);
+  const [returnDate, setReturnDate] = useState(end);
 
   useEffect(() => {
     if (pickup && returnDate) {
@@ -27,7 +29,8 @@ export function ItemDurationField({ onDurationChange }: ItemProps) {
           <label className="text-label">Pick up</label>
         </div>
         <input 
-          type="date" 
+          type="date"
+          value={pickup}
           className="artisan-input !py-3 text-sm" 
           onChange={(e) => setPickup(e.target.value)}
         />
@@ -39,6 +42,7 @@ export function ItemDurationField({ onDurationChange }: ItemProps) {
         </div>
         <input 
           type="date" 
+          value={returnDate}
           className="artisan-input !py-3 text-sm" 
           onChange={(e) => setReturnDate(e.target.value)}
         />

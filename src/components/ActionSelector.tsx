@@ -18,17 +18,17 @@ export function ActionSelector({ category, onBack, onSelect }: ActionSelectorPro
   const priorityActions = category.actions.slice(0, 3)
 
   return (
-    <div className="animate-in max-w-lg mx-auto">
+    <div className="animate-in mx-auto">
       <button onClick={onBack} className="nav-link-back mb-6">
         <ChevronLeft className="w-4 h-4" />
         <span>Back to Categories</span>
       </button>
 
-      <div className="flex items-center gap-3 mb-4">
+      <div className="flex items-center justify-center gap-3 mb-4">
         <div className={`icon-box ${category.color} border-none text-white shadow-sm`}>
           <category.icon className="w-5 h-5" />
         </div>
-        <h2 className="text-xl font-serif text-brand-dark">{category.label}</h2>
+        <h2 className="artisan-header-title">{category.label}</h2>
       </div>
 
       <div className="relative mb-4">

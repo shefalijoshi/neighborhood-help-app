@@ -34,7 +34,7 @@ function AppLayout() {
     <div className="min-h-screen">
       <main className="flex-1 w-full mx-auto px-6 pt-6">
         {/* Global Identity Bar: Branding Left, Profile Right */}
-        <header className="mb-4 flex justify-between items-center border-b border-brand-border pb-8">
+        <header className="mb-4 flex justify-between items-center border-b border-brand-border pb-4">
           <div className="flex items-center gap-3">
             <h1 className="text-xl font-serif text-[#2D2D2D] tracking-tight">
               {neighborhood?.name || 'Local Neighborhood'}
