@@ -26,7 +26,8 @@ export interface Category {
   label: string;
   icon: LucideIcon;
   color: string; // Tailwinds bg- class
-  borderColor: string; // Tailwinds bg- class
+  borderColor: string; // Tailwinds border- class
+  secondaryColor: string; // Tailwinds border- class
   requiresProfile: boolean;
   actions: Action[];
 }
@@ -36,8 +37,9 @@ export const CATEGORY_INTENT: Category[] = [
     id: 'pet_care',
     label: 'Pet Care',
     icon: Dog,
-    color: 'bg-brand-green',
-    borderColor: 'border-brand-green',
+    color: 'bg-rose-400',
+    borderColor: 'border-rose-400',
+    secondaryColor: 'bg-rose-50',
     requiresProfile: true, // Triggers Profile Picker
     actions: [
       { id: 'quick_walk', label: 'Quick Walk', type: 'service', tag: 'Dog Walk' },
@@ -54,8 +56,9 @@ export const CATEGORY_INTENT: Category[] = [
     id: 'lawn_garden',
     label: 'Lawn & Garden',
     icon: TreePine,
-    color: 'bg-brand-green',
-    borderColor: 'border-brand-green',
+    color: 'bg-emerald-400',
+    borderColor: 'border-emerald-400',
+    secondaryColor: 'bg-emerald-50',
     requiresProfile: false,
     actions: [
       { id: 'mowing', label: 'Lawn Mowing', type: 'service', tag: 'Mowing' },
@@ -71,8 +74,9 @@ export const CATEGORY_INTENT: Category[] = [
     id: 'events_parties',
     label: 'Events & Parties',
     icon: PartyPopper,
-    color: 'bg-orange-500',
-    borderColor: 'border-orange-500',
+    color: 'bg-fuchsia-400',
+    borderColor: 'border-fuchsia-400',
+    secondaryColor: 'bg-fuchsia-50',
     requiresProfile: false,
     actions: [
       { id: 'party_setup', label: 'Setup/Clean-up', type: 'service', tag: 'Event Help' },
@@ -87,8 +91,9 @@ export const CATEGORY_INTENT: Category[] = [
     id: 'home_repair',
     label: 'Home & Repairs',
     icon: Wrench,
-    color: 'bg-brand-terracotta',
-    borderColor: 'border-brand-terracotta',
+    color: 'bg-amber-400',
+    borderColor: 'border-amber-400',
+    secondaryColor: 'bg-amber-50',
     requiresProfile: false,
     // The first 3 are used for the Quick-Tap Grid in Step 2
     actions: [
@@ -106,8 +111,9 @@ export const CATEGORY_INTENT: Category[] = [
     id: 'moving_lifting',
     label: 'Moving & Lifting',
     icon: Package,
-    color: 'bg-brand-dark',
-    borderColor: 'border-brand-dark',
+    color: 'bg-slate-400',
+    borderColor: 'border-slate-400',
+    secondaryColor: 'bg-slate-50',
     requiresProfile: false,
     actions: [
       { id: 'heavy_lifting', label: 'Heavy Lifting', type: 'service', tag: 'Lifting' },
@@ -122,8 +128,9 @@ export const CATEGORY_INTENT: Category[] = [
     id: 'housekeeping',
     label: 'Housekeeping & Org',
     icon: Sparkles,
-    color: 'bg-blue-500',
-    borderColor: 'border-blue-500',
+    color: 'bg-sky-400',
+    borderColor: 'border-sky-400',
+    secondaryColor: 'bg-sky-50',
     requiresProfile: false,
     actions: [
       { id: 'kitchen_clean', label: 'Kitchen Deep Clean', type: 'service', tag: 'Cleaning' },
@@ -138,8 +145,9 @@ export const CATEGORY_INTENT: Category[] = [
     id: 'tech_devices',
     label: 'Tech & Devices',
     icon: Laptop,
-    color: 'bg-indigo-600',
-    borderColor: 'border-indigo-600',
+    color: 'bg-indigo-400',
+    borderColor: 'border-indigo-400',
+    secondaryColor: 'bg-indigo-50',
     requiresProfile: false,
     actions: [
       { id: 'wifi_help', label: 'Wi-Fi Setup Help', type: 'service', tag: 'Tech Support' },
@@ -154,8 +162,9 @@ export const CATEGORY_INTENT: Category[] = [
     id: 'family_learning',
     label: 'Family & Learning',
     icon: Users,
-    color: 'bg-rose-500',
-    borderColor: 'border-rose-500',
+    color: 'bg-orange-400',
+    borderColor: 'border-orange-400',
+    secondaryColor: 'bg-orange-50',
     requiresProfile: false,
     actions: [
       { id: 'math_tutoring', label: 'Math Tutoring', type: 'service', tag: 'Tutoring' },

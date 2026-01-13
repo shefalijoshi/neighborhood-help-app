@@ -15,6 +15,7 @@ export function RequestCard({ request, isMine, hasMyOffer }: RequestCardProps) {
   const Icon = category?.icon || Clock;
   const brandColor = category?.color || 'bg-brand-green';
   const borderBrandColor = category?.borderColor || 'border-brand-green';
+  const secondaryBrandColor = category?.secondaryColor || 'light:bg-brand-green';
 
   const action = category?.actions.find(a => a.id === request.action_id);
   const actionLabel = action?.label || '';
@@ -78,14 +79,14 @@ export function RequestCard({ request, isMine, hasMyOffer }: RequestCardProps) {
         
         {request.details && !actionLabel && (
           <div className='!py-0'>
-            <q className="text-brand-text mt-1 line-clamp-2 opacity-90 italic text-sm">
+            <q className={`${secondaryBrandColor} text-brand-text mt-1 line-clamp-2 opacity-90 italic text-sm`}>
               {request.details}
             </q>
           </div>
         )}            
         
         {/* Metadata Details */}
-        <div className="detail-row border-t border-brand-stone">
+        <div className="detail-row">
           <div className="flex flex-wrap items-center gap-3">
               <span className="badge-pill hidden sm:inline-flex">
                 {request.subject_tag}

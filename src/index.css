@@ -225,7 +225,7 @@
 
   /* Security/Status Badges 2 */
   .badge-pill-light {
-    @apply inline-block px-3 py-1 border-l-[2px] border-brand-terracotta text-[14px] tracking-[0.1em] text-brand-terracotta;
+    @apply inline-block px-3 py-1 text-[14px] tracking-[0.1em] text-brand-terracotta;
   }
 
   /* Standardized Alert Containers */

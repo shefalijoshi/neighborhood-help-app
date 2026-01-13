@@ -13,6 +13,7 @@ export function AssistCard({ assist, currentProfileId }: AssistCardProps) {
   const Icon = category?.icon || Clock;
   const brandColor = category?.color || 'bg-brand-green';
   const borderBrandColor = category?.borderColor || 'bg-brand-green';
+  const secondaryBrandColor = category?.secondaryColor || 'light:bg-brand-green';
 
   const {name} = assist.snapshot_data;
 
@@ -49,9 +50,9 @@ export function AssistCard({ assist, currentProfileId }: AssistCardProps) {
       params={{ assistId: assist.id }}
       className={`block artisan-card ${borderBrandColor} px-4 pt-4 pb-2 hover:shadow-md transition-shadow group`}
     >
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-1">
         {/* Header: Identity & Status */}
-        <div className="flex justify-between items-start">
+        <div className="flex justify-between items-center">
           <div className="flex gap-3 items-center">
             <div className={`icon-box transition-transform group-hover:scale-110 ${brandColor} border-none text-white shadow-md`}>
               <Icon className="w-5 h-5" />
@@ -62,32 +63,23 @@ export function AssistCard({ assist, currentProfileId }: AssistCardProps) {
               </h3>
             </div>
           </div>
-        </div>
-        <div className="flex items-center gap-1.5 mt-0.5 justify-between">
-          <div className="badge-pill-light flex items-center gap-1 justify-end text-brand-dark">
-            <AssistProgressIcon className="w-4 h-4" />
-            <span className="line-clamp-2">
-              {assistLabel}
-            </span>
-          </div>
-          <div className="flex items-center gap-1 justify-end text-brand-dark">
-            <Lock className="w-3 h-3 text-brand-terracotta" /> 
+          <div className="flex items-center gap-1 justify-end text-brand-terracotta bg-brand-stone px-2 py-1 rounded-lg">
+            <Lock className="w-3 h-3" /> 
             <span className="text-xs font-mono tracking-tighter">
               {assist.verification_code}
             </span>
           </div>
         </div>
-
         {assist.details && !actionLabel && (
           <div className='!py-0'>
-            <q className="text-brand-text mt-1 line-clamp-2 opacity-90 italic text-sm">
+            <q className={`${secondaryBrandColor} text-brand-text mt-1 line-clamp-2 opacity-90 italic text-sm`}>
               {assist.details}
             </q>
           </div>
-        )}  
-
+        )}
+        
         {/* Metadata: Category Tag & Duration/Return Date */}
-        <div className="detail-row pt-2 border-t border-brand-stone">
+        <div className="detail-row py-2">
           <div className="flex flex-wrap items-center gap-3 w-full">
             <span className="badge-pill hidden sm:inline-flex">
               {assist.subject_tag}
@@ -118,6 +110,14 @@ export function AssistCard({ assist, currentProfileId }: AssistCardProps) {
             <div className="ml-auto">
               <ChevronRight className="w-5 h-5 text-brand-stone group-hover:text-brand-green transition-colors" />
             </div>
+          </div>
+        </div>
+        <div className="flex items-center gap-1.5 justify-between">
+          <div className="badge-pill-light flex items-center gap-1 justify-end text-brand-dark">
+            <AssistProgressIcon className="w-4 h-4" />
+            <span className="line-clamp-2">
+              {assistLabel}
+            </span>
           </div>
         </div>
       </div>
