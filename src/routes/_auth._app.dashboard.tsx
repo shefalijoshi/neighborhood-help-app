@@ -118,7 +118,7 @@ function DashboardPage() {
         ) : neighborRequests.length > 0 ? (
           <div className="space-y-4">
             {neighborRequests.map((req: any) => (
-              <RequestCard key={req.id} request={req} isMine={false} />
+              <RequestCard key={req.id} request={req} isMine={false} hasMyOffer={req.helper_id === profile?.id} />
             ))}
           </div>
         ) : (

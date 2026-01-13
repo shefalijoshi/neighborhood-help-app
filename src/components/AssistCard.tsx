@@ -13,19 +13,22 @@ export function AssistCard({ assist, currentProfileId }: AssistCardProps) {
   const Icon = category?.icon || Clock;
   const brandColor = category?.color || 'bg-brand-green';
 
+  const {name} = assist.snapshot_data;
+
   const isHelper = assist.helper_id === currentProfileId;
 
   const action = category?.actions.find(a => a.id === assist.action_id);
-  const actionLabel = action?.label || assist.subject_tag;
+  const actionLabel = action?.label || '';
 
   // 2. Heading Logic: display_name + action label
-  const heading = assist.display_name 
-    ? `${assist.display_name} — ${actionLabel}`
-    : actionLabel;
+  let heading = name || '';
+  if (actionLabel) {
+    heading = heading ? `${heading} - ${actionLabel}` : `${actionLabel}`;
+  }
 
   // Timing Logic
   const startTime = new Date(assist.scheduled_time);
-  const endTime = addMinutes(startTime, assist.expected_duration || 0);  
+  const endTime = addMinutes(startTime, assist.expected_duration || 0);
 
   return (
     <Link
@@ -59,6 +62,14 @@ export function AssistCard({ assist, currentProfileId }: AssistCardProps) {
           </div>
         </div>
 
+        {assist.details && !actionLabel && (
+          <div className='!py-0'>
+            <q className="text-brand-text mt-1 line-clamp-2 opacity-90 italic text-sm">
+              {assist.details}
+            </q>
+          </div>
+        )}  
+
         {/* Metadata: Category Tag & Duration/Return Date */}
         <div className="detail-row pt-2 border-t border-brand-stone">
           <div className="flex flex-wrap items-center gap-3 w-full">
@@ -79,7 +90,7 @@ export function AssistCard({ assist, currentProfileId }: AssistCardProps) {
               {assist.request_type === 'item' && (
                 <div className="flex items-center gap-1 text-brand-text text-[13px]">
                   <Calendar className="w-4 h-4 opacity-70" />
-                  <span>Return {format(endTime, 'MMM d')}</span>
+                  <span>{format(startTime, 'MMM d')} - {format(endTime, 'MMM d')}</span>
                 </div>
               )}
               {assist.seeker_address && (

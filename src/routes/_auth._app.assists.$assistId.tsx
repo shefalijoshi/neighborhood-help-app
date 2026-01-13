@@ -12,9 +12,12 @@ import {
   Play, 
   CheckCircle2,
   Brain,
-  BadgeAlert
+  BadgeAlert,
+  NotebookText,
+  Calendar
 } from 'lucide-react'
-import { format } from 'date-fns'
+import { addMinutes, format, formatDuration, intervalToDuration } from 'date-fns'
+import { CATEGORY_INTENT } from '../lib/categoryIntent'
 
 export const Route = createFileRoute('/_auth/_app/assists/$assistId')({
   component: AssistDetailComponent,
@@ -33,7 +36,15 @@ function AssistDetailComponent() {
         t_assist_id: assistId 
       })
       if (error) throw error
-      return data
+      const {name, size, temperament, special_needs} = data.snapshot_data;
+      const dataWithHelperProfile = {
+        ...data,
+        display_name: name,
+        size,
+        temperament,
+        special_needs
+      }
+      return dataWithHelperProfile
     }
   })
 
@@ -57,9 +68,24 @@ function AssistDetailComponent() {
   const isHelper = assist.helper_id === profile?.id
   const status = assist.status
 
+  const category = CATEGORY_INTENT.find(c => c.id === assist.category_id);
+  const action = category?.actions.find(a => a.id === assist.action_id);
+
+  const actionLabel = action?.label || '';
+
+  let heading = assist?.display_name || '';
+  if (actionLabel) {
+    heading = heading ? `${heading} - ${actionLabel}` : `${actionLabel}`;
+  }
+
+  const startTime = new Date(assist.scheduled_time);
+  const endTime = addMinutes(startTime, assist.expected_duration || 0);
+
+  const isCustomRequest = assist.action_id === 'custom_service' || assist.action_id === 'custom_item'
+
   return (
-    <div className="artisan-page-focus pt-8">
-      <div className="artisan-container-large px-4">
+    <div className="artisan-page-focus">
+      <div className="artisan-container-large">
         {/* Navigation */}
         <button 
           onClick={() => navigate({ to: '/dashboard' })}
@@ -71,37 +97,30 @@ function AssistDetailComponent() {
 
         {/* Hero Header */}
         <header className="artisan-header">
-          <div className="relative inline-block mb-4">
-            <div className="h-24 w-24 bg-white rounded-full shadow-md flex items-center justify-center overflow-hidden border-4 border-white mx-auto">
-              {assist.dog_photo ? (
-                <img src={assist.dog_photo} alt={assist.dog_name} className="h-full w-full object-cover" />
-              ) : (
-                <Dog className="w-10 h-10 text-brand-stone" />
-              )}
-            </div>
-            <h1 className="artisan-header-title">{assist.dog_name || 'Dog Walk'}</h1>
-            <p className="artisan-meta-tiny">
-              {assist.dog_size}
-            </p>
-            <div className="flex items-center gap-1 px-1.5 py-0.5 bg-brand-terracotta text-white rounded-full">
-              <span className="capitalize">
-                {assist.status.replace('_', ' ')}{isHelper ? ` with ${assist.seeker_name}` : ` with ${assist.helper_name}`}
-              </span>
-            </div>
-          </div>
+          <h2 className="artisan-header-title">{heading}</h2>
+          <p className="artisan-meta-tiny !text-brand-muted tracking-widest">
+            {category?.label}
+          </p>
+          {isCustomRequest && assist.details && !actionLabel && (
+            <q className="text-brand-text mt-1">
+              {assist.details}
+            </q>
+          )}
         </header>
 
         <div className="space-y-4">
           {/* Verification Card */}
-          <div className="artisan-card p-6 bg-white border-t-4 border-brand-terracotta text-center">
+          <div className="artisan-card p-2 bg-white border-t-4 border-brand-terracotta text-center">
             <div className="flex justify-center mb-3">
               <ShieldCheck className="w-6 h-6 text-brand-terracotta" />
             </div>
-            <p className="text-label mb-2">Verification Code</p>
+            <span className="capitalize">
+              {assist.status.replace('_', ' ')}{isHelper ? ` with ${assist.seeker_name}` : ` with ${assist.helper_name}`}
+            </span>
             <div className="text-4xl font-serif tracking-[0.3em] text-brand-dark ml-[0.3em]">
               {assist.verification_code}
             </div>
-            <p className="artisan-meta-tiny">Exchange this code when meeting to verify identity</p>
+            <p className="text-label">Exchange this code when meeting to verify identity</p>
           </div>
 
           {/* Action Area */}
@@ -114,7 +133,7 @@ function AssistDetailComponent() {
                   className="btn-primary"
                 >
                   <Play className="w-4 h-4 fill-current" />
-                  {updateStatusMutation.isPending ? 'STARTING...' : 'START WALK'}
+                  {updateStatusMutation.isPending ? 'STARTING...' : 'START'}
                 </button>
               ) : (
                 <button 
@@ -131,25 +150,47 @@ function AssistDetailComponent() {
 
           <div className="artisan-card mb2">
             <div className="artisan-card-inner">
+            {!isCustomRequest && assist.details && (
+              <div className="detail-row">
+                <div className="icon-box">
+                  <NotebookText className="w-4 h-4 text-brand-green" />
+                </div>
+                <div>
+                  <p className="text-label block mb-3">Extra Details</p>
+                  <q className="text-brand-dark font-medium">
+                    {assist.details}
+                  </q>
+              </div>
+            </div>)}
+              <div className="detail-row">
+                <div className="icon-box">
+                  <Calendar className="w-4 h-4 text-brand-green" />
+                </div>
+                {assist.request_type === 'item' && (
+                  <div>
+                    <p className="text-label block mb-3">Pick up and return</p>
+                    <p className="text-brand-dark font-medium">
+                    {format(startTime, 'MMM d')} - {format(endTime, 'MMM d')}
+                    </p>
+                  </div>)
+                }
+                {assist.request_type === 'service' && (
+                  <div>
+                    <p className="text-label block mb-3">Starting</p>
+                    <p className="text-brand-dark font-medium">
+                    {format(startTime, 'MMM d HH:mm a')}
+                    </p>
+                  </div>)
+                }
+              </div>
+              {/* 2. Duration Section */}
               <div className="detail-row">
                 <div className="icon-box">
                   <Clock className="w-4 h-4 text-brand-green" />
                 </div>
                 <div>
-                  <p className="text-label block mb-3">Timeframe</p>
-                  <p className="text-brand-dark font-medium">
-                    {assist.timeframe ? format(new Date(assist.timeframe), 'p') : 'As Soon As Possible'}
-                  </p>
-                </div>
-              </div>
-              {/* 2. Duration Section */}
-              <div className="detail-row">
-                <div className="icon-box">
-                  <Dog className="w-4 h-4 text-brand-green" />
-                </div>
-                <div>
-                  <p className="text-label block mb-3">Planned Duration</p>
-                  <p className="text-brand-dark font-medium">{assist.duration} Minutes</p>
+                  <p className="text-label block mb-3">Estimated Time</p>
+                  <p className="text-brand-dark font-medium">{formatDuration(intervalToDuration({start: 0, end: assist.expected_duration * 60 * 1000}), { delimiter: ', ' })}</p>
                 </div>
               </div>
               {/* 3. Location Section */}
@@ -158,15 +199,15 @@ function AssistDetailComponent() {
                   <MapPin className="w-4 h-4 text-brand-green" />
                 </div>
                 <div>
-                  <p className="text-label block mb-3">Pickup Address (Verified)</p>
+                  <p className="text-label block mb-3">Address (Verified)</p>
                   <p className="text-brand-dark font-medium">
-                  {isHelper ? assist.seeker_full_address : assist.seeker_street_name}
+                    {assist.seeker_address}
                   </p>
                   <p className="artisan-meta-tiny mt-2">Full address shared once accepted</p>
                 </div>
               </div>
               {/* Contact information */}
-              {isHelper && (
+              {isHelper && assist.seeker_email && (
                   <div className="detail-row">
                   <div className="icon-box">
                     <Mail className="w-4 h-4 text-brand-green/60" />
@@ -200,27 +241,9 @@ function AssistDetailComponent() {
             </div>
           </div>
 
-          {/* Special Needs Card */}
-          {(assist.temperament?.length > 0) &&
-          (<div className="artisan-card mb-2">
-            <div className="artisan-card-inner">
-              <div className="detail-row">
-                <div className="icon-box">
-                  <BadgeAlert className="w-4 h-4 text-brand-terracotta" />
-                </div>
-                <div>
-                  <p className="text-label block mb-3">Care Instructions</p>
-                  <p className="text-brand-dark font-medium">
-                    "{assist.special_needs}"
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>)}
-
           {/* Personality Card */}
           {(assist.temperament?.length > 0) && (
-            <div className="artisan-card">
+            <div className="artisan-card mb-2">
             <div className="artisan-card-inner">
               <div className="detail-row">
                 <div className="icon-box">
@@ -240,6 +263,24 @@ function AssistDetailComponent() {
             </div>
           </div>
           )}
+
+          {/* Special Needs Card */}
+          {(assist.temperament?.length > 0) &&
+          (<div className="artisan-card">
+            <div className="artisan-card-inner">
+              <div className="detail-row">
+                <div className="icon-box">
+                  <BadgeAlert className="w-4 h-4 text-brand-terracotta" />
+                </div>
+                <div>
+                  <p className="text-label block mb-3">Care Instructions</p>
+                  <p className="text-brand-dark font-medium">
+                    "{assist.special_needs}"
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>)}
         </div>
       </div>
     </div>

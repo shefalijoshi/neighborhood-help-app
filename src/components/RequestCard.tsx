@@ -6,9 +6,10 @@ import { CATEGORY_INTENT } from '../lib/categoryIntent';
 interface RequestCardProps {
   request: any;
   isMine: boolean;
+  hasMyOffer: boolean;
 }
 
-export function RequestCard({ request, isMine }: RequestCardProps) {
+export function RequestCard({ request, isMine, hasMyOffer }: RequestCardProps) {
   // 1. Category is always known - use it for branding
   const category = CATEGORY_INTENT.find((c) => c.id === request.category_id);
   const Icon = category?.icon || Clock;
@@ -63,7 +64,8 @@ export function RequestCard({ request, isMine }: RequestCardProps) {
               <span className="artisan-meta-tiny text-brand-muted">
                 {isMine 
                   ? `Ends ${format(new Date(request.expires_at), 'p')}`
-                  : `By ${format(new Date(request.expires_at), 'p')}`}
+                  : hasMyOffer ? 'Offer pending' : `By ${format(new Date(request.expires_at), 'p')}`
+                }
               </span>
             </div>
           </div>
