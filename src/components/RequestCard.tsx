@@ -54,25 +54,6 @@ export function RequestCard({ request, isMine, hasMyOffer }: RequestCardProps) {
                 {category?.label}
               </p>
             </div>
-            
-            {isMine && request.offer_count > 0 && (
-              <div className="flex items-center gap-1 px-2 py-1 bg-brand-terracotta text-white rounded-full">
-                <Hand className="w-3 h-3" />
-                <span className="text-[10px] font-bold">{request.offer_count}</span>
-              </div>
-            )}
-          </div>
-          
-          <div className="text-right pt-2">
-            <div className="flex items-center gap-1 justify-end text-label">
-              <Clock className="w-3 h-3 text-brand-muted" /> 
-              <span className="artisan-meta-tiny text-brand-muted">
-                {isMine 
-                  ? `Ends ${format(new Date(request.expires_at), 'p')}`
-                  : hasMyOffer ? 'Offer pending' : `By ${format(new Date(request.expires_at), 'p')}`
-                }
-              </span>
-            </div>
           </div>
         </div>
 
@@ -125,6 +106,23 @@ export function RequestCard({ request, isMine, hasMyOffer }: RequestCardProps) {
           <div className="ml-auto">
             <ChevronRight className="w-5 h-5 text-brand-stone group-hover:text-brand-green transition-colors" />
           </div>
+        </div>
+        <div className="flex items-center gap-1.5 justify-between mt-1">
+          <div className="flex items-center gap-1 justify-end text-label">
+            <Clock className="w-3 h-3 text-brand-muted" /> 
+            <span className="artisan-meta-tiny text-brand-muted">
+              {isMine 
+                ? `Ends ${format(new Date(request.expires_at), 'p')}`
+                : hasMyOffer ? 'Offer pending' : `Need by ${format(new Date(request.expires_at), 'p')}`
+              }
+            </span>
+          </div>
+          {isMine && request.offer_count > 0 && (
+            <div className={`flex items-center gap-1 px-2 py-1 ${brandColor} text-white rounded-full`}>
+              <Hand className="w-3 h-3" />
+              <span className="text-[10px] font-bold">{request.offer_count}</span>
+            </div>
+          )}
         </div>
       </div>
     </Link>

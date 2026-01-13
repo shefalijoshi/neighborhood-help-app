@@ -258,4 +258,8 @@
   .spinner-brand {
     @apply h-12 w-12 border-4 border-brand-green border-t-transparent rounded-full animate-spin mx-auto mb-6;
   }
+
+  .partial-border-circle {
+    @apply border-8 rounded-full w-10 h-10 border-r-transparent border-t-transparent border-b-transparent border-l-red-500
+  }
 }

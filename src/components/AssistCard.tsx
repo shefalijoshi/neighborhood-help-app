@@ -1,6 +1,6 @@
 import { Link } from '@tanstack/react-router';
 import { format, addMinutes, intervalToDuration, formatDuration } from 'date-fns';
-import { Clock, Calendar, ChevronRight, MapPin, AlarmClock, ClockFading, Check, Clipboard, Lock } from 'lucide-react';
+import { Clock, Calendar, ChevronRight, MapPin, AlarmClock, ClockFading, Check, Clipboard, Lock, Handshake, UserCheck, CheckLine, CheckCheck, PartyPopper } from 'lucide-react';
 import { CATEGORY_INTENT } from '../lib/categoryIntent';
 
 interface AssistCardProps {
@@ -20,11 +20,11 @@ export function AssistCard({ assist, currentProfileId }: AssistCardProps) {
   const isHelper = assist.helper_id === currentProfileId;
   let AssistProgressIcon = Clipboard;
   if (assist.status === 'confirmed') {
-    AssistProgressIcon = AlarmClock;
+    AssistProgressIcon = Handshake;
   } else if (assist.status === 'in_progress') {
     AssistProgressIcon = ClockFading;
   } else if (assist.status === 'completed') {
-    AssistProgressIcon = Check;
+    AssistProgressIcon = CheckCheck;
   }
   const assistLabel = isHelper ? assist.seeker_name : assist.helper_name;
 
