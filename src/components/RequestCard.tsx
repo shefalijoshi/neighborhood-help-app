@@ -14,7 +14,7 @@ export function RequestCard({ request, isMine, hasMyOffer }: RequestCardProps) {
   const category = CATEGORY_INTENT.find((c) => c.id === request.category_id);
   const Icon = category?.icon || Clock;
   const brandColor = category?.color || 'bg-brand-green';
-  const borderBrandColor = brandColor.replace('bg-', 'border-');
+  const borderBrandColor = category?.borderColor || 'border-brand-green';
 
   const action = category?.actions.find(a => a.id === request.action_id);
   const actionLabel = action?.label || '';

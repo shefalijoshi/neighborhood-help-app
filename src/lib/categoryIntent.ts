@@ -26,6 +26,7 @@ export interface Category {
   label: string;
   icon: LucideIcon;
   color: string; // Tailwinds bg- class
+  borderColor: string; // Tailwinds bg- class
   requiresProfile: boolean;
   actions: Action[];
 }
@@ -36,6 +37,7 @@ export const CATEGORY_INTENT: Category[] = [
     label: 'Pet Care',
     icon: Dog,
     color: 'bg-brand-green',
+    borderColor: 'border-brand-green',
     requiresProfile: true, // Triggers Profile Picker
     actions: [
       { id: 'quick_walk', label: 'Quick Walk', type: 'service', tag: 'Dog Walk' },
@@ -53,6 +55,7 @@ export const CATEGORY_INTENT: Category[] = [
     label: 'Lawn & Garden',
     icon: TreePine,
     color: 'bg-brand-green',
+    borderColor: 'border-brand-green',
     requiresProfile: false,
     actions: [
       { id: 'mowing', label: 'Lawn Mowing', type: 'service', tag: 'Mowing' },
@@ -69,6 +72,7 @@ export const CATEGORY_INTENT: Category[] = [
     label: 'Events & Parties',
     icon: PartyPopper,
     color: 'bg-orange-500',
+    borderColor: 'border-orange-500',
     requiresProfile: false,
     actions: [
       { id: 'party_setup', label: 'Setup/Clean-up', type: 'service', tag: 'Event Help' },
@@ -84,6 +88,7 @@ export const CATEGORY_INTENT: Category[] = [
     label: 'Home & Repairs',
     icon: Wrench,
     color: 'bg-brand-terracotta',
+    borderColor: 'border-brand-terracotta',
     requiresProfile: false,
     // The first 3 are used for the Quick-Tap Grid in Step 2
     actions: [
@@ -102,6 +107,7 @@ export const CATEGORY_INTENT: Category[] = [
     label: 'Moving & Lifting',
     icon: Package,
     color: 'bg-brand-dark',
+    borderColor: 'border-brand-dark',
     requiresProfile: false,
     actions: [
       { id: 'heavy_lifting', label: 'Heavy Lifting', type: 'service', tag: 'Lifting' },
@@ -117,6 +123,7 @@ export const CATEGORY_INTENT: Category[] = [
     label: 'Housekeeping & Org',
     icon: Sparkles,
     color: 'bg-blue-500',
+    borderColor: 'border-blue-500',
     requiresProfile: false,
     actions: [
       { id: 'kitchen_clean', label: 'Kitchen Deep Clean', type: 'service', tag: 'Cleaning' },
@@ -132,6 +139,7 @@ export const CATEGORY_INTENT: Category[] = [
     label: 'Tech & Devices',
     icon: Laptop,
     color: 'bg-indigo-600',
+    borderColor: 'border-indigo-600',
     requiresProfile: false,
     actions: [
       { id: 'wifi_help', label: 'Wi-Fi Setup Help', type: 'service', tag: 'Tech Support' },
@@ -147,6 +155,7 @@ export const CATEGORY_INTENT: Category[] = [
     label: 'Family & Learning',
     icon: Users,
     color: 'bg-rose-500',
+    borderColor: 'border-rose-500',
     requiresProfile: false,
     actions: [
       { id: 'math_tutoring', label: 'Math Tutoring', type: 'service', tag: 'Tutoring' },

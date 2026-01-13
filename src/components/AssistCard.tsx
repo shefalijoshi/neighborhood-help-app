@@ -12,7 +12,7 @@ export function AssistCard({ assist, currentProfileId }: AssistCardProps) {
   const category = CATEGORY_INTENT.find(c => c.id === assist.category_id);
   const Icon = category?.icon || Clock;
   const brandColor = category?.color || 'bg-brand-green';
-  const borderBrandColor = brandColor.replace('bg-', 'border-');
+  const borderBrandColor = category?.borderColor || 'bg-brand-green';
 
   const {name} = assist.snapshot_data;
 

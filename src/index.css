@@ -10,20 +10,20 @@
   /* --- Primary Brand Colors --- */
   --color-brand-green: #4A5D4E;
   --color-brand-green-hover: #3d4d40;
-  --color-brand-terracotta: #BC6C4D; /* Used for "Complete Walk" and Errors */
+  --color-brand-terracotta: #BC6C4D; 
   --color-brand-terracotta-hover: #A55E42;
   
   /* --- Backgrounds & Surfaces --- */
-  --color-brand-beige: #F9F7F2;  /* Main Page Background */
-  --color-brand-stone: #F2F0E9;  /* Pill/Card-inner backgrounds */
+  --color-brand-beige: #F9F7F2;  
+  --color-brand-stone: #F2F0E9;  
   
   /* --- Borders & Outlines --- */
   --color-brand-border: #C8C4BD;
   
   /* --- Typography --- */
-  --color-brand-dark: #2D2D2D;   /* Main Headings */
-  --color-brand-text: #6B6658;   /* Body text / Italics */
-  --color-brand-muted: #A09B8E;  /* Meta labels / Captions */
+  --color-brand-dark: #2D2D2D;   
+  --color-brand-text: #6B6658;   
+  --color-brand-muted: #A09B8E;  
 
   /* --- Animations (Used in Dashboard & Vouch) --- */
   --animate-in: fade-in 0.5s ease-out;
@@ -155,8 +155,6 @@
     @apply p-2 bg-white rounded-r-[2rem] rounded-l-[0.5rem] border-l-3 border-brand-terracotta
            shadow-[0_8px_30px_rgb(0,0,0,0.04)] 
            transition-all duration-500 ease-out;
-           /* before:absolute before:-left-1 before:h-full before:w-2 before:bg-brand-terracotta; */
-
   }
 
   /* The inner recessed area for cards */
