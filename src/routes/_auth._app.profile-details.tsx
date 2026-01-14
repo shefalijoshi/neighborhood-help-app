@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import { supabase } from '../lib/supabase'
-import { MapPin, Mail, ShieldCheck, ChevronLeft, Edit3, Clock, UserCheck } from 'lucide-react'
+import { MapPin, Mail, ShieldCheck, ChevronLeft, Edit3, Clock, UserCheck, LogOut } from 'lucide-react'
 
 export const Route = createFileRoute('/_auth/_app/profile-details')({
   component: ProfilePage,
@@ -21,6 +21,16 @@ function ProfilePage() {
     },
     enabled: !!profile?.id,
   })
+
+  const handleSignout = async () => {
+    const { error } = await supabase.auth.signOut()
+
+    if (!error) {
+      navigate({ to: '/' })
+    } else {
+      alert(error.message)
+    }
+  };
 
   // Mapping status to specific branding logic from index.css
   const getStatusConfig = (status: string) => {
@@ -119,14 +129,14 @@ function ProfilePage() {
             </p>
           </div>
 
-          {/* <div className="pt-4 flex justify-center">
+          <div className="pt-4 flex justify-center">
             <div className="w-full max-w-sm">
-              <button className="btn-outline border-brand-border text-brand-text hover:border-brand-green hover:text-brand-green">
-                <Edit3 className="w-4 h-4" />
-                Edit Profile Details
+              <button className="btn-primary border-brand-border text-brand-text hover:border-brand-green hover:text-brand-green" onClick={() => handleSignout()}>
+                <LogOut className="w-4 h-4" />
+                Sign out
               </button>
             </div>
-          </div> */}
+          </div>
         </div>
       </div>
     </div>
