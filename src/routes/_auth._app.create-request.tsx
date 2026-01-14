@@ -164,21 +164,18 @@ function CreateRequestPage() {
                 onSelect={(id) => setPetId(id)} 
               />
             )}
-            <div className="artisan-card">
+            <div className={`artisan-card ${selectedCategory?.borderColor}`}>
               <div className="artisan-card-inner !p-2 space-y-2 text-left">
                 {/* Form Fork: TimingModule Logic */}
                 {selectedAction.type === 'service' && (
                   <div className="detail-row">
-                    {/* <div className="icon-box">
-                      <Clock className="w-4 h-4 text-brand-green" />
-                    </div> */}
                     <div className="flex-1">
                       <label className="text-label">When?</label>
                       <div className="grid grid-cols-2 gap-2 mb-4 mt-2">
                         <button 
                           onClick={() => setTimeframe('now')} 
                           className={`py-3 rounded-xl border-2 transition-all ${
-                            timeframe === 'now' ? 'border-brand-green bg-brand-green text-white' : 'border-brand-stone text-brand-text'
+                            timeframe === 'now' ? `${selectedCategory?.color} ${selectedCategory?.borderColor} text-white` : 'border-brand-stone text-brand-text'
                           }`}
                         >
                           As Soon As Possible
@@ -186,7 +183,7 @@ function CreateRequestPage() {
                         <button 
                           onClick={() => setTimeframe('scheduled')} 
                           className={`py-3 rounded-xl border-2 transition-all ${
-                            timeframe === 'scheduled' ? 'border-brand-green bg-brand-green text-white' : 'border-brand-stone text-brand-text'
+                            timeframe === 'scheduled' ? `${selectedCategory?.color} ${selectedCategory?.borderColor} text-white` : 'border-brand-stone text-brand-text'
                           }`}
                         >
                           Schedule Later
@@ -205,7 +202,7 @@ function CreateRequestPage() {
                   </div>)}
                 {selectedAction.type === 'service' && (
                   <div className='detail-row'>
-                    <ServiceDurationField value={duration} onChange={setDuration} />
+                    <ServiceDurationField value={duration} onChange={setDuration} color={selectedCategory?.color} />
                   </div>
                 )} 
                 {selectedAction.type !== 'service' && (
@@ -243,7 +240,7 @@ function CreateRequestPage() {
                   <button 
                     onClick={() => createRequest.mutate()}
                     disabled={createRequest.isPending || (selectedCategory?.requiresProfile && !petId)}
-                    className="btn-primary w-full flex justify-center items-center gap-2"
+                    className={`btn-primary ${selectedCategory?.color} w-full flex justify-center items-center gap-2`}
                   >
                     {createRequest.isPending ? (
                       <Loader2 className="w-4 h-4 animate-spin" />

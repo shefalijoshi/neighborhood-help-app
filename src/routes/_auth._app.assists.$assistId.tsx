@@ -7,13 +7,12 @@ import {
   Phone, 
   Mail, 
   Clock, 
-  ShieldCheck, 
   Play, 
   CheckCircle2,
   Brain,
   BadgeAlert,
   NotebookText,
-  Calendar
+  Calendar,
 } from 'lucide-react'
 import { addMinutes, format, formatDuration, intervalToDuration } from 'date-fns'
 import { CATEGORY_INTENT } from '../lib/categoryIntent'
@@ -69,6 +68,10 @@ function AssistDetailComponent() {
 
   const category = CATEGORY_INTENT.find(c => c.id === assist.category_id);
   const action = category?.actions.find(a => a.id === assist.action_id);
+  const Icon = category?.icon || Clock;
+  const brandColor = category?.color || 'bg-brand-green';
+  const borderBrandColor = category?.borderColor || 'bg-brand-green';
+  const secondaryBrandColor = category?.secondaryColor || 'light:bg-brand-green';
 
   const actionLabel = action?.label || '';
 
@@ -99,58 +102,57 @@ function AssistDetailComponent() {
 
         {/* Hero Header */}
         <header className="artisan-header">
-          <h2 className="artisan-header-title">{heading}</h2>
+          <div className="flex gap-2 items-center justify-center">
+            <div className={`icon-box transition-transform group-hover:scale-110 ${brandColor} border-none text-white shadow-md`}>
+              <Icon className="w-5 h-5" />
+            </div>
+            <h2 className="artisan-header-title">{heading}</h2>
+          </div>
           <p className="artisan-meta-tiny !text-brand-muted tracking-widest">
             {category?.label}
           </p>
           {isCustomRequest && assist.details && !actionLabel && (
-            <q className="text-brand-text mt-1">
+            <q className={`text-brand-text mt-1 ${secondaryBrandColor}`}>
               {assist.details}
             </q>
           )}
         </header>
 
-        <div className="space-y-4">
+        <div className="space-y-2">
           {/* Verification Card */}
-          <div className="artisan-card p-2 bg-white border-t-4 border-brand-terracotta text-center">
-            <div className="flex justify-center mb-3">
-              <ShieldCheck className="w-6 h-6 text-brand-terracotta" />
+          <div className="space-y-2 w-full animate-in zoom-in-95 duration-300">
+            <div className="artisan-code-display">
+              <span className="text-passcode">{assist.verification_code}</span>
             </div>
-            <span className="capitalize">
-              {assist.status.replace('_', ' ')}{isHelper ? ` with ${assist.seeker_name}` : ` with ${assist.helper_name}`}
-            </span>
-            <div className="text-4xl font-serif tracking-[0.3em] text-brand-dark ml-[0.3em]">
-              {assist.verification_code}
-            </div>
-            <p className="text-label">Exchange this code when meeting to verify identity</p>
+            <p className="text-brand-text">Exchange this code {isHelper ? ` with ${assist.seeker_name}` : ` with ${assist.helper_name}`} when meeting to verify identity</p>
           </div>
 
           {/* Action Area */}
           {isHelper && status !== 'completed' && (
-            <div className="mt-8">
+            <div className="mt-4">
               {status === 'confirmed' ? (
                 <button 
                   onClick={() => updateStatusMutation.mutate('in_progress')}
                   disabled={updateStatusMutation.isPending}
-                  className="btn-primary"
+                  className={`btn-primary ${brandColor}`}
                 >
                   <Play className="w-4 h-4 fill-current" />
-                  {updateStatusMutation.isPending ? 'STARTING...' : 'START'}
+                  {updateStatusMutation.isPending ? 'Starting...' : 'Let\'s do this!'}
                 </button>
               ) : (
                 <button 
                   onClick={() => updateStatusMutation.mutate('completed')}
                   disabled={updateStatusMutation.isPending}
-                  className="btn-secondary"
+                  className={`btn-secondary ${brandColor}`}
                 >
                   <CheckCircle2 className="w-4 h-4" />
-                  {updateStatusMutation.isPending ? 'COMPLETING...' : 'COMPLETE WALK'}
+                  {updateStatusMutation.isPending ? 'Completing...' : 'All done!'}
                 </button>
               )}
             </div>
           )}
 
-          <div className="artisan-card mb2">
+          <div className={`artisan-card ${borderBrandColor} mb2`}>
             <div className="artisan-card-inner">
             {!isCustomRequest && assist.details && (
               <div className="detail-row">
@@ -245,7 +247,7 @@ function AssistDetailComponent() {
 
           {/* Personality Card */}
           {(assist.temperament?.length > 0) && (
-            <div className="artisan-card mb-2">
+            <div className={`artisan-card ${borderBrandColor} mb2`}>
             <div className="artisan-card-inner">
               <div className="detail-row">
                 <div className="icon-box">
@@ -268,7 +270,7 @@ function AssistDetailComponent() {
 
           {/* Special Needs Card */}
           {(assist.temperament?.length > 0) &&
-          (<div className="artisan-card">
+          (<div className={`artisan-card ${borderBrandColor}`}>
             <div className="artisan-card-inner">
               <div className="detail-row">
                 <div className="icon-box">

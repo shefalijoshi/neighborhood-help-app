@@ -165,6 +165,10 @@ function RequestDetailComponent() {
 
   const category = CATEGORY_INTENT.find(c => c.id === request.category_id);
   const action = category?.actions.find(a => a.id === request.action_id);
+  const Icon = category?.icon || Clock;
+  const brandColor = category?.color || 'bg-brand-green';
+  const borderBrandColor = category?.borderColor || 'bg-brand-green';
+  const secondaryBrandColor = category?.secondaryColor || 'light:bg-brand-green';
 
   const actionLabel = action?.label || '';
 
@@ -196,7 +200,12 @@ function RequestDetailComponent() {
         </button>
 
         <header className="mb-4 text-center">
-          <h2 className="artisan-header-title">{heading}</h2>
+          <div className="flex gap-2 items-center justify-center">
+            <div className={`icon-box transition-transform group-hover:scale-110 ${brandColor} border-none text-white shadow-md`}>
+              <Icon className="w-5 h-5" />
+            </div>
+            <h2 className="artisan-header-title">{heading}</h2>
+          </div>
           <p className="artisan-meta-tiny !text-brand-muted tracking-widest">
             {category?.label}
           </p>
@@ -210,27 +219,25 @@ function RequestDetailComponent() {
         {/* Action Area */}
         <div className="mt-2">
           {isOwner ? (
-            <div className="space-y-4">
+            <div className="space-y-2">
               {offers?.length !== 0 && (<h2 className="text-label">
                 Neighbors Available ({offers?.length || 0})
               </h2>)}
               {offers?.map((offer: any) => (
-                <div key={offer.id} className="artisan-card p-6">
+                <div key={offer.id} className={`artisan-card ${borderBrandColor} p-6`}>
                   <div className="flex justify-between items-start">
                     <h3 className="text-md">{offer.profiles?.display_name}</h3>
                     <button 
                       disabled={acceptOfferMutation.isPending}
                       onClick={() => acceptOfferMutation.mutate(offer.id)}
-                      className="px-4 py-2 bg-[#4A5D4E] text-white text-[10px] font-bold uppercase tracking-widest rounded-full hover:bg-[#3d4d40] transition-colors flex items-center gap-2"
+                      className={`${brandColor} capitalize px-4 py-2 text-white text-[10px] tracking-widest rounded-full transition-colors flex items-center gap-2`}
                     >
-                      {acceptOfferMutation.isPending ? 'Accepting...' : 'Accept'}
+                      {acceptOfferMutation.isPending ? 'Accepting...' : 'Yes, I accept!'}
                     </button>
                   </div>
-                  <div className="detail-row mt-2 pt-2 border-t border-brand-stone">
-                    {offer.note && (
-                      <q className="text-label">{offer.note}</q>
-                    )}
-                  </div>
+                  {offer.note && (<div className="detail-row mt-2 pt-2 border-t border-brand-stone">
+                    <q className="text-label">{offer.note}</q>
+                  </div>)}
                 </div>
               ))}
               {offers?.length === 0 && (
@@ -242,15 +249,15 @@ function RequestDetailComponent() {
               )}
             </div>
           ) : existingOffer ? (
-            <div className="artisan-card bg-brand-green">
+            <div className={`artisan-card ${borderBrandColor}`}>
               {existingOffer.status === 'pending' && (
                 <div className='detail-row justify-center'>
                   <div className="icon-box">
                     <CircleQuestionMark className="w-4 h-4 text-brand-green" />
                   </div>
                   <div>
-                    <h3 className="font-serif text-white text-lg mb-1">Offer Pending</h3>
-                    <p className="artisan-meta-tiny text-white">Waiting for a response.</p>
+                    <h3 className="font-serif text-lg mb-1">Offer Pending</h3>
+                    <p className="artisan-meta-tiny">Waiting for a response.</p>
                   </div>
                 </div>
               )}
@@ -286,12 +293,12 @@ function RequestDetailComponent() {
           ) : !showOfferForm ? (
             <button 
               onClick={() => setShowOfferForm(true)}
-              className="btn-primary"
+              className={`btn-primary ${brandColor}`}
             >
               I'm Available to Help
             </button>
           ) : (//Show Offer form so helper can provide offer details
-            <div className="artisan-card p-6 bg-white shadow-xl animate-in slide-in-from-bottom-4 duration-500">
+            <div className={`artisan-card ${borderBrandColor} p-6 bg-white shadow-xl animate-in slide-in-from-bottom-4 duration-500`}>
               <div className="space-y-6">
                 <div>
                   <label className="text-label">Optional Note</label>
@@ -308,7 +315,7 @@ function RequestDetailComponent() {
                   <div className="grid grid-cols-2 gap-3">
                     <button 
                       onClick={() => setSharePhone(!sharePhone)}
-                      className={`artisan-toggle-btn flex items-center justify-center gap-2 ${
+                      className={`artisan-toggle-btn flex items-center justify-center ${brandColor} gap-2 ${
                         sharePhone ? 'artisan-toggle-btn-active' : 'artisan-toggle-btn-inactive'
                       }`}
                     >
@@ -317,7 +324,7 @@ function RequestDetailComponent() {
                     </button>
                     <button 
                       onClick={() => setShareEmail(!shareEmail)}
-                      className={`artisan-toggle-btn flex items-center justify-center gap-2 ${
+                      className={`artisan-toggle-btn flex items-center justify-center ${brandColor} gap-2 ${
                         shareEmail ? 'artisan-toggle-btn-active' : 'artisan-toggle-btn-inactive'
                       }`}
                     >
@@ -333,9 +340,9 @@ function RequestDetailComponent() {
                   <button 
                     disabled={submitOfferMutation.isPending}
                     onClick={() => submitOfferMutation.mutate()}
-                    className="btn-primary w-full tracking-[0.2em] text-sm py-4"
+                    className={`btn-primary ${brandColor} w-full tracking-[0.2em] text-sm py-4`}
                   >
-                    {submitOfferMutation.isPending ? 'Submitting...' : 'Confirm Offer'}
+                    {submitOfferMutation.isPending ? 'Submitting...' : 'I\'ll do it!'}
                   </button>
                   <button 
                     onClick={() => setShowOfferForm(false)}
@@ -349,7 +356,7 @@ function RequestDetailComponent() {
           )}
         </div>
         <div className="space-y-4 mt-2">
-          <div className="artisan-card mb-2">
+          <div className={`artisan-card ${borderBrandColor} mb-2`}>
             <div className="artisan-card-inner">
               {!isCustomRequest && request.details && (
                 <div className="detail-row">
@@ -414,7 +421,7 @@ function RequestDetailComponent() {
 
           {/* Personality Card */}
           {request.temperament && request.temperament.length > 0 && (
-            <div className="artisan-card mb-2">
+            <div className={`artisan-card ${borderBrandColor} mb-2`}>
               <div className="artisan-card-inner">
                 <div className="detail-row">
                   <div className="icon-box">
@@ -437,7 +444,7 @@ function RequestDetailComponent() {
 
           {/* Special Needs Card */}
           {request.special_needs && (
-            <div className="artisan-card">
+            <div className={`artisan-card ${borderBrandColor}`}>
               <div className="artisan-card-inner">
                 <div className="detail-row">
                   <div className="icon-box">

@@ -28,14 +28,14 @@ export function CategoryGrid({ onBack, onSelect }: CategoryGridProps) {
           <button
             key={cat.id}
             onClick={() => onSelect(cat)}
-            className="artisan-card group active:scale-95 transition-transform cursor-pointer"
+            className={`artisan-card ${cat.borderColor} !p-0 group active:scale-95 transition-transform cursor-pointer`}
           >
-            <div className="artisan-card-inner flex flex-col items-center justify-center">
+            <div className="artisan-card-inner p-4 bg-white flex flex-col items-center justify-center">
               <div className={`icon-box mb-2 transition-transform group-hover:scale-110 ${cat.color} border-none text-white shadow-md`}>
                 <cat.icon className="w-6 h-6" />
               </div>
               
-              <span className="artisan-card-title text-center leading-tight">
+              <span className="artisan-card-title text-lg text-wrap text-center leading-tight">
                 {cat.label}
               </span>
             </div>

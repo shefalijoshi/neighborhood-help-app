@@ -3,9 +3,10 @@ import { Clock } from 'lucide-react';
 interface ServiceProps {
   value: number;
   onChange: (mins: number) => void;
+  color: string | undefined;
 }
 
-export function ServiceDurationField({ value, onChange }: ServiceProps) {
+export function ServiceDurationField({ value, onChange, color='bg-brand-green' }: ServiceProps) {
   const quickTime = [15, 30, 60, 90];
 
   return (
@@ -22,7 +23,7 @@ export function ServiceDurationField({ value, onChange }: ServiceProps) {
             type="button"
             onClick={() => onChange(t)}
             className={`badge-pill transition-colors cursor-pointer ${
-              value === t ? 'bg-brand-green text-white' : 'bg-brand-stone hover:bg-brand-border/30'
+              value === t ? `${color} text-white` : 'bg-brand-stone hover:bg-brand-border/30'
             }`}
           >
             {t < 60 ? `${t}m` : `${t/60}h`}

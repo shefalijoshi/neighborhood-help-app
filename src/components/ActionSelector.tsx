@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Search, ChevronLeft, PlusCircle } from 'lucide-react'
+import { Search, ChevronLeft, PlusCircle, Dot, HelpCircle, HelpingHand, HeartHandshake } from 'lucide-react'
 import type { Category, Action } from '../lib/categoryIntent'
 
 interface ActionSelectorProps {
@@ -42,7 +42,7 @@ export function ActionSelector({ category, onBack, onSelect }: ActionSelectorPro
         />
       </div>
 
-      <div className="space-y-1">
+      <div className={`space-y-1 artisan-card ${category.borderColor}`}>
         <p className="text-label mb-4 ml-1 italic">
           {searchQuery ? 'Search Results' : 'Commonly requested'}
         </p>
@@ -50,9 +50,14 @@ export function ActionSelector({ category, onBack, onSelect }: ActionSelectorPro
           <button
             key={action.id}
             onClick={() => onSelect(action)}
-            className="w-full flex items-center justify-between p-4 border-b border-brand-border/20 hover:bg-brand-stone/40 transition-colors text-left"
+            className={`w-full flex items-center group justify-between p-4 border-b border-brand-border/20 hover:bg-brand-stone/100 transition-colors text-left`}
           >
-            <span className="text-brand-text font-medium">{action.label}</span>
+            <div className="flex gap-2 items-center">
+              <span className={`icon-box w-5 h-5 group-hover:scale-120 ${category.color} border-none text-white shadow-sm`}>
+                <HeartHandshake/>
+              </span>
+              <span className="text-brand-text font-medium">{action.label}</span>
+            </div>
             <span className="badge-pill !py-0.5 !px-2 !text-[9px] border border-brand-border/30">
                {action.type}
             </span>
@@ -65,13 +70,13 @@ export function ActionSelector({ category, onBack, onSelect }: ActionSelectorPro
             type: 'service', 
             tag: 'Custom Service' 
           })}
-          className="w-full flex items-center justify-between p-5 border-b border-brand-border/20 bg-brand-stone/10 hover:bg-brand-stone/30 transition-colors text-left group"
+          className="w-full flex group items-center justify-between p-5 border-b border-brand-border/20 bg-brand-stone/10 hover:bg-brand-stone/100 transition-colors text-left"
         >
           <div className="flex flex-col">
             <span className="text-brand-text italic text-sm">Help with something else?</span>
             <span className="!text-[9px] text-brand-muted tracking-wider">Custom Service</span>
           </div>
-          <PlusCircle className="w-5 h-5 text-brand-green group-hover:rotate-90 transition-transform" />
+          <PlusCircle className="w-5 h-5 text-brand-green group-hover:scale-120 group-hover:rotate-90 transition-transform" />
         </button>
 
         {/* --- Custom Item Trigger --- */}
@@ -82,13 +87,13 @@ export function ActionSelector({ category, onBack, onSelect }: ActionSelectorPro
             type: 'item', 
             tag: 'Custom Item' 
           })}
-          className="w-full flex items-center justify-between p-5 border-b border-brand-border/20 bg-brand-stone/10 hover:bg-brand-stone/30 transition-colors text-left group"
+          className="w-full flex items-center justify-between p-5 border-b border-brand-border/20 bg-brand-stone/10 hover:bg-brand-stone/100 transition-colors text-left group"
         >
           <div className="flex flex-col">
             <span className="text-brand-text italic text-sm">Borrowing something else?</span>
             <span className="!text-[9px] text-brand-muted tracking-wider">Custom Item</span>
           </div>
-          <PlusCircle className="w-5 h-5 text-brand-green group-hover:rotate-90 transition-transform" />
+          <PlusCircle className="w-5 h-5 text-brand-green group-hover:scale-120 group-hover:rotate-90 transition-transform" />
         </button>
       </div>
     </div>

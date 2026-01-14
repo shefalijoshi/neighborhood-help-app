@@ -36,6 +36,7 @@ function TimerLabel({ minutes, isExpired }: { minutes: number | null; isExpired:
 function VouchPendingPage() {
   const queryClient = useQueryClient()
   const router = useRouter()
+  const navigate = useNavigate()
   const { profile } = Route.useRouteContext()
 
   const { data: membership, isLoading } = useQuery({
@@ -59,6 +60,11 @@ function VouchPendingPage() {
   const [minutesRemaining, setMinutesRemaining] = useState<number | null>(null)
 
   // TODO: navigate to dashboard when vouch is successful
+  useEffect(() => {
+    if (!membership || membership?.status !== 'active') return
+    navigate({ to: '/' })
+  }, [membership, navigate])
+
   useEffect(() => {
     if (!membership?.vouch_code_expires_at) return
     const expiry = new Date(membership.vouch_code_expires_at).getTime()
@@ -100,8 +106,8 @@ function VouchPendingPage() {
   const showCode = (!activeCode && !isLoading) || isExpired
 
   return (
-    <div className="artisan-page-focus">
-      <div className="artisan-container-sm max-w-sm">
+    <div className="artisan-page-focus pt-12 pb-20 px-6">
+      <div className="artisan-container-sm">
         
         <header className="artisan-header">
           <SecurityBadge isExpired={isExpired} />
@@ -115,8 +121,8 @@ function VouchPendingPage() {
           }
         </header>
 
-        <div className={`artisan-card border-t-4 transition-colors duration-500 ${isExpired ? 'border-brand-terracotta' : 'border-brand-green'}`}>
-          <div className="artisan-card-inner text-center">
+        <div className={`artisan-card transition-colors duration-500 ${isExpired ? 'border-brand-terracotta' : 'border-brand-green'}`}>
+          <div className="artisan-card-inner p-4 text-center">
             <span className="artisan-meta-tiny mb-6 uppercase tracking-widest block">
               Resident Security Code
             </span>

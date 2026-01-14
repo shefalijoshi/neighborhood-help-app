@@ -55,7 +55,7 @@ function VouchEntryPage() {
       <div className="artisan-page-focus">
         <div className="artisan-container-sm max-w-sm">
           <h1 className="artisan-header-title">Neighborhood Expanded</h1>
-          <p className="artisan-header-description">"Their residency is now verified by your word."</p>
+          <p className="artisan-header-description mb-2">"Their residency is now verified by your word."</p>
           <button onClick={() => navigate({ to: '/' })} className="btn-primary px-8">Finish</button>
         </div>
       </div>
@@ -73,7 +73,7 @@ function VouchEntryPage() {
         </header>
   
         {/* The Unified Artisan Card */}
-        <div className="artisan-card border-t-4 border-brand-green">
+        <div className="artisan-card">
           <div className="artisan-card-inner text-center">
             <form onSubmit={handleSubmit} className="space-y-10">
               <PasscodeInput 

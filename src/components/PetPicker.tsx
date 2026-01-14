@@ -1,10 +1,10 @@
 import { Link, useSearch } from '@tanstack/react-router';
-import { Dog, Check, PlusCircle, Plus, PlusCircleIcon } from 'lucide-react';
+import { Dog, Check, Plus } from 'lucide-react';
+import { CATEGORY_INTENT } from '../lib/categoryIntent';
 
 interface Pet {
   id: string;
   name: string;
-  // In the future, you might have image_url here
 }
 
 interface PetPickerProps {
@@ -16,24 +16,16 @@ interface PetPickerProps {
 export function PetPicker({ pets, selectedId, onSelect }: PetPickerProps) {
   const search = useSearch({ from: '/_auth/_app/create-request' }); // Capture current params
 
-  // if (!pets || pets.length === 0) {
-  //   return (
-  //     <Link
-  //       to="/help-details/create"
-  //       search={{ 
-  //         returnTo: '/create-request',
-  //         categoryId: search.categoryId,
-  //         actionId: search.actionId 
-  //       }}
-  //       className="link-standard block"
-  //     >
-  //       <div className="alert-error py-4">
-  //         <PlusCircle className="w-4 h-4" />
-  //         <span className="text-label text-white">Add a pet profile</span>
-  //       </div>
-  //     </Link>
-  //   );
-  // }
+  const petCareCategory = CATEGORY_INTENT.filter(intent => intent.id === 'pet_care');
+  let brandColor;
+  let borderColor;
+  if (petCareCategory.length > 0) {
+    brandColor = petCareCategory[0]?.color;
+    borderColor = petCareCategory[0]?.borderColor;
+  } else {
+    brandColor = 'bg-brand-green';
+    borderColor = 'border-brand-green';
+  }
 
   return (
     <section className="space-y-2">
@@ -61,14 +53,14 @@ export function PetPicker({ pets, selectedId, onSelect }: PetPickerProps) {
               onClick={() => onSelect(pet.id)}
               className={`flex-shrink-0 flex flex-col items-center gap-3 p-4 rounded-2xl border-2 transition-all duration-200 active:scale-95 ${
                 isSelected 
-                ? 'border-brand-green bg-brand-green/5 shadow-md' 
+                ? `${brandColor} ${borderColor} shadow-md`
                 : 'border-brand-border/20 bg-white hover:border-brand-border/40'
               }`}
             >
               {/* Pet Avatar Circle */}
               <div className={`h-14 w-14 rounded-full flex items-center justify-center text-xl font-serif border-2 transition-colors ${
                 isSelected 
-                ? 'bg-brand-green text-white border-white shadow-inner' 
+                ? `${brandColor} text-white border-white shadow-inner`
                 : 'bg-brand-stone text-brand-muted border-brand-border/20'
               }`}>
                 {pet.name[0]}
@@ -76,7 +68,7 @@ export function PetPicker({ pets, selectedId, onSelect }: PetPickerProps) {
 
               {/* Pet Name Label */}
               <span className={`text-label ${
-                isSelected ? 'text-brand-green' : 'text-brand-text'
+                isSelected ? 'text-white' : 'text-brand-text'
               }`}>
                 {pet.name}
               </span>

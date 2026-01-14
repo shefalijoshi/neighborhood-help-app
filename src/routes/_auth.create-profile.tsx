@@ -138,7 +138,7 @@ function CreateProfileComponent() {
               </p>
             </header>
 
-            <div className="artisan-card">
+            <div className="artisan-card border-brand-green">
               <div className="artisan-card-inner space-y-6 text-left">
                 
                 {/* Name Input Group */}
@@ -220,11 +220,11 @@ function CreateProfileComponent() {
             <div className="grid gap-5 text-left">
               <button 
                 onClick={() => setMethod('join')}
-                className={`artisan-card transition-all border-2 ${
+                className={`artisan-card transition-all ${
                   method === 'join' ? 'border-brand-green' : 'border-transparent'
                 }`}
               >
-                <div className="p-6">
+                <div className="p-1">
                   <div className="flex items-center gap-4 mb-3">
                     <div className="icon-box text-brand-green">
                       <Key className="w-4 h-4" />
@@ -249,11 +249,11 @@ function CreateProfileComponent() {
 
               <button 
                 onClick={() => setMethod('create')}
-                className={`artisan-card transition-all border-2 ${
+                className={`artisan-card transition-all ${
                   method === 'create' ? 'border-brand-terracotta' : 'border-transparent'
                 }`}
               >
-                <div className="p-6">
+                <div className="p-1">
                   <div className="flex items-center gap-4 mb-3">
                     <div className="icon-box text-brand-terracotta bg-brand-terracotta/5 border-brand-terracotta/20">
                       <Home className="w-4 h-4" />

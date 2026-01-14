@@ -60,7 +60,7 @@ function InvitePage() {
           </p>
         </header>
 
-        <div className="artisan-card border-t-4 border-brand-green">
+        <div className="artisan-card border-brand-green">
           <div className="artisan-card-inner">
             {!inviteCode ? (
               <div className="space-y-6 w-full">
