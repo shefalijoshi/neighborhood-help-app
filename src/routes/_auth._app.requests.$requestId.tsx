@@ -168,7 +168,6 @@ function RequestDetailComponent() {
   const Icon = category?.icon || Clock;
   const brandColor = category?.color || 'bg-brand-green';
   const borderBrandColor = category?.borderColor || 'bg-brand-green';
-  const secondaryBrandColor = category?.secondaryColor || 'light:bg-brand-green';
 
   const actionLabel = action?.label || '';
 

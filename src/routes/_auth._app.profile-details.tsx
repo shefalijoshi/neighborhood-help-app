@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import { supabase } from '../lib/supabase'
-import { MapPin, Mail, ShieldCheck, ChevronLeft, Edit3, Clock, UserCheck, LogOut } from 'lucide-react'
+import { MapPin, Mail, ShieldCheck, ChevronLeft, Clock, UserCheck, LogOut } from 'lucide-react'
 
 export const Route = createFileRoute('/_auth/_app/profile-details')({
   component: ProfilePage,

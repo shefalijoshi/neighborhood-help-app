@@ -26,7 +26,9 @@ export async function getCoordsFromAddress(
       address
     )}.json?access_token=${token}&limit=1&types=address,poi`;
 
-    const response = await fetch(endpoint, { signal });
+    const response = await fetch(endpoint, {
+      ...(signal ? { signal } : {})
+    });
     if (!response.ok) throw new Error("Network response was not ok");
     
     const data = await response.json();

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Search, ChevronLeft, PlusCircle, Dot, HelpCircle, HelpingHand, HeartHandshake } from 'lucide-react'
+import { Search, ChevronLeft, PlusCircle, HeartHandshake } from 'lucide-react'
 import type { Category, Action } from '../lib/categoryIntent'
 
 interface ActionSelectorProps {

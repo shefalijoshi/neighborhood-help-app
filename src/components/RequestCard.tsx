@@ -1,6 +1,6 @@
 import { Link } from '@tanstack/react-router';
 import { format, addMinutes } from 'date-fns';
-import { Clock, MapPin, Calendar, Hand, ChevronRight, Sparkles, AlertCircle, Star, StarIcon, AlertOctagon, BadgeAlert, TriangleAlert, ClockAlert, OctagonAlert, Circle, CircleIcon, AsteriskIcon, BadgeHelp, HelpCircle, HelpingHand, ClockIcon, MessageCircleWarningIcon, AmbulanceIcon, SparkleIcon, SparklesIcon } from 'lucide-react';
+import { Clock, MapPin, Calendar, Hand, ChevronRight, StarIcon, SparklesIcon } from 'lucide-react';
 import { CATEGORY_INTENT } from '../lib/categoryIntent';
 
 interface RequestCardProps {

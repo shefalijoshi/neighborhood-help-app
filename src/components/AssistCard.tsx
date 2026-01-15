@@ -1,6 +1,6 @@
 import { Link } from '@tanstack/react-router';
 import { format, addMinutes, intervalToDuration, formatDuration } from 'date-fns';
-import { Clock, Calendar, ChevronRight, MapPin, AlarmClock, ClockFading, Check, Clipboard, Lock, Handshake, UserCheck, CheckLine, CheckCheck, PartyPopper } from 'lucide-react';
+import { Clock, Calendar, ChevronRight, MapPin, ClockFading, Clipboard, Lock, Handshake, CheckCheck } from 'lucide-react';
 import { CATEGORY_INTENT } from '../lib/categoryIntent';
 
 interface AssistCardProps {
