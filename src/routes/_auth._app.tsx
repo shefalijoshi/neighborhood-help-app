@@ -36,9 +36,19 @@ function AppLayout() {
         {/* Global Identity Bar: Branding Left, Profile Right */}
         <header className="mb-4 flex justify-between items-center border-b border-brand-border pb-4">
           <div className="flex items-center gap-3">
-            <h1 className="text-xl font-serif text-[#2D2D2D] tracking-tight">
-              {neighborhood?.name || 'Local Neighborhood'}
-            </h1>
+            <Link to="/dashboard" className="flex items-center gap-3">
+              <img 
+                src="/logo.png" 
+                alt="LocalLoop" 
+                className="h-14 w-auto"
+              />
+              <div className="flex flex-col">
+                {/* <span className="text-xl font-bold text-brand-green">LocalLoop</span> */}
+                <span className="text-xl text-brand-muted font-serif tracking-tight">
+                  {neighborhood?.name || 'Local Neighborhood'}
+                </span>
+              </div>
+            </Link>
           </div>
 
           <Link 

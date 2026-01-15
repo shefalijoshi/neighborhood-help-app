@@ -1,9 +1,10 @@
 {
-  "name": "neighborhood-help-app",
+  "name": "localloop",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "clean": "rm -rf node_modules",
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",

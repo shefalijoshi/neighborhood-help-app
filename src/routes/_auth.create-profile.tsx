@@ -119,7 +119,14 @@ function CreateProfileComponent() {
   return (
     <div className="artisan-page-focus pt-12 pb-20 px-6">
       <div className="artisan-container-sm">
-        
+        <div className="flex flex-col items-center mb-8">
+          <img 
+            src="/logo.png" 
+            alt="LocalLoop" 
+            className="h-16 w-auto mb-3"
+          />
+          <span className="text-2xl font-bold text-brand-terracotta">LocalLoop</span>
+        </div>
         {error && (
           <div className="alert-error mb-8 animate-in border-dashed">
             <span className="alert-title mb-0">{error}</span>

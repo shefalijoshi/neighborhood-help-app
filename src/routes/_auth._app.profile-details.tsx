@@ -131,7 +131,7 @@ function ProfilePage() {
 
           <div className="pt-4 flex justify-center">
             <div className="w-full max-w-sm">
-              <button className="btn-primary border-brand-border text-brand-text hover:border-brand-green hover:text-brand-green" onClick={() => handleSignout()}>
+              <button className="btn-primary border-brand-border text-white hover:border-brand-green hover:text-brand-green" onClick={() => handleSignout()}>
                 <LogOut className="w-4 h-4" />
                 Sign out
               </button>

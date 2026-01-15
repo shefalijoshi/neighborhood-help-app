@@ -37,12 +37,14 @@ function LoginComponent() {
   return (
     <div className="artisan-page-focus p-6">
       <div className="w-full max-w-md">
-        <header className="artisan-header">
-          <div className="badge-pill mb-4">
-            Secure Access
-          </div>
-          <h1 className="artisan-header-title">Neighborhood</h1>
-        </header>
+        <div className="flex flex-col items-center mb-8">
+          <img 
+            src="/logo.png" 
+            alt="LocalLoop"
+            className="h-16 w-auto mb-3"
+          />
+          <span className="text-2xl font-bold text-brand-terracotta">LocalLoop</span>
+        </div>
 
         <div className="artisan-card">
           <div className="artisan-card-inner">

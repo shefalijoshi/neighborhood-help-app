@@ -108,6 +108,14 @@ function VouchPendingPage() {
   return (
     <div className="artisan-page-focus pt-12 pb-20 px-6">
       <div className="artisan-container-sm">
+        <div className="flex flex-col items-center mb-8">
+          <img 
+            src="/logo.png" 
+            alt="LocalLoop" 
+            className="h-16 w-auto mb-3"
+          />
+          <span className="text-2xl font-bold text-brand-green">LocalLoop</span>
+        </div>
         
         <header className="artisan-header">
           <SecurityBadge isExpired={isExpired} />

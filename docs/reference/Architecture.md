@@ -1,6 +1,6 @@
 # Architecture Summary
 
-The Neighborhood Help App is built on a **Fortress-style, data-centric architecture** that prioritizes safety, trust, and correctness in a community-driven environment.
+The LocalLoop is built on a **Fortress-style, data-centric architecture** that prioritizes safety, trust, and correctness in a community-driven environment.
 
 The system models real-world interactions—requests, offers, assists, and neighborhood membership—as explicit, stateful workflows. Each core entity has a clearly defined lifecycle, with transitions that mirror how neighbors safely coordinate help in the real world.
 
