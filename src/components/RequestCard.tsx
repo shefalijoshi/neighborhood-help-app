@@ -1,15 +1,16 @@
 import { Link } from '@tanstack/react-router';
 import { format, addMinutes } from 'date-fns';
-import { Clock, MapPin, Calendar, Hand, ChevronRight } from 'lucide-react';
+import { Clock, MapPin, Calendar, Hand, ChevronRight, Sparkles, AlertCircle, Star, StarIcon, AlertOctagon, BadgeAlert, TriangleAlert, ClockAlert, OctagonAlert, Circle, CircleIcon, AsteriskIcon, BadgeHelp, HelpCircle, HelpingHand, ClockIcon, MessageCircleWarningIcon, AmbulanceIcon, SparkleIcon, SparklesIcon } from 'lucide-react';
 import { CATEGORY_INTENT } from '../lib/categoryIntent';
 
 interface RequestCardProps {
   request: any;
   isMine: boolean;
   hasMyOffer: boolean;
+  currentTime?: number;
 }
 
-export function RequestCard({ request, isMine, hasMyOffer }: RequestCardProps) {
+export function RequestCard({ request, isMine, hasMyOffer, currentTime = new Date().getTime() }: RequestCardProps) {
   // 1. Category is always known - use it for branding
   const category = CATEGORY_INTENT.find((c) => c.id === request.category_id);
   const Icon = category?.icon || Clock;
@@ -33,12 +34,59 @@ export function RequestCard({ request, isMine, hasMyOffer }: RequestCardProps) {
   const startTime = new Date(request.scheduled_time);
   const returnTime = addMinutes(startTime, request.duration || 0);
 
+  const getBadge = () => {
+    const scheduledTime = new Date(request.scheduled_time).getTime();
+    const createdTime = new Date(request.created_at).getTime();
+    const hoursUntilNeeded = (scheduledTime - currentTime) / (1000 * 60 * 60);
+    const hoursSinceCreated = (currentTime - createdTime) / (1000 * 60 * 60);
+    
+    // Urgent if help is needed within 2 hours
+    if (hoursUntilNeeded <= 2 && hoursUntilNeeded > 0) {
+      return { label: 'Urgent', color: 'bg-red-500' };
+    }
+    // New if posted within last 2 hours
+    if (hoursSinceCreated < 2) {
+      return { label: 'New', color: 'bg-brand-green' };
+    }
+    return null;
+  };
+
+  const badge = getBadge();
+
   return (
     <Link 
       to="/requests/$requestId" 
       params={{ requestId: request.id }}
-      className={`block artisan-card ${borderBrandColor} px-4 pt-4 pb-2 hover:shadow-md transition-shadow group`}
+      className={`block artisan-card ${borderBrandColor} px-4 pt-4 pb-2 hover:shadow-md transition-shadow group relative overflow-visible`}
     >
+      {badge && badge.label === 'Urgent' && (
+        <div className="absolute -top-4 -right-3 z-20 rotate-12 flex items-center justify-center">
+          <StarIcon
+            size={58} 
+            className="text-red-500 fill-red-500 drop-shadow-md" 
+            strokeWidth={1}
+          />
+          <div className="absolute flex flex-col items-center justify-center text-white">
+            <span className="text-[10px] font-black tracking-tighter leading-none">
+              Urgent
+            </span>
+          </div>
+        </div>
+      )}
+      {badge && badge.label === 'New' && (
+        <div className="absolute -top-3 -right-2 z-20 flex items-center justify-center">
+          <SparklesIcon 
+            size={58} 
+            className="text-yellow-300 fill-yellow-300 drop-shadow-sm" 
+            strokeWidth={1}
+          />
+          <div className="absolute flex flex-col items-center justify-center text-brand-dark">
+            <span className="text-[12px] font-black tracking-tighter leading-none">
+              New
+            </span>
+          </div>
+        </div>
+      )}
       <div className="flex flex-col gap-">
         {/* Header Section */}
         <div className="flex justify-between items-start">
@@ -46,7 +94,7 @@ export function RequestCard({ request, isMine, hasMyOffer }: RequestCardProps) {
             <div className={`icon-box mb-2 transition-transform group-hover:scale-110 ${brandColor} border-none text-white shadow-md`}>
               <Icon className="w-5 h-5" />
             </div>
-            <div>
+            <div className="flex flex-col">
               <h3 className="artisan-card-title !text-xl !truncate max-w-[200px]">
                 {heading}
               </h3>

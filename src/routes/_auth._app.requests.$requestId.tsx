@@ -319,8 +319,8 @@ function RequestDetailComponent() {
                         sharePhone ? 'artisan-toggle-btn-active' : 'artisan-toggle-btn-inactive'
                       }`}
                     >
-                      <Phone className="w-4 h-4" />
-                      <span className="text-brand-white">Phone</span>
+                      <Phone className="w-4 h-4 text-white" />
+                      <span className="text-white">Phone</span>
                     </button>
                     <button 
                       onClick={() => setShareEmail(!shareEmail)}
@@ -328,8 +328,8 @@ function RequestDetailComponent() {
                         shareEmail ? 'artisan-toggle-btn-active' : 'artisan-toggle-btn-inactive'
                       }`}
                     >
-                      <Mail className="w-4 h-4" />
-                      <span className="text-brand-white">Email</span>
+                      <Mail className="w-4 h-4 text-white" />
+                      <span className="text-white">Email</span>
                     </button>
                   </div>
                 </div>

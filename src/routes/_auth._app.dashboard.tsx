@@ -225,7 +225,7 @@ function DashboardPage() {
           <h2 className="text-label mb-4">What you need help with</h2>
           <div className="space-y-4">
             {myRequests.map((req: any) => (
-              <RequestCard key={req.id} request={req} isMine={true} hasMyOffer={req.helper_id === profile?.id} />
+              <RequestCard key={req.id} request={req} isMine={true} hasMyOffer={req.helper_id === profile?.id} currentTime={now.getTime()} />
             ))}
           </div>
         </section>
@@ -241,7 +241,7 @@ function DashboardPage() {
         ) : neighborRequests.length > 0 ? (
           <div className="space-y-4">
             {neighborRequests.map((req: any) => (
-              <RequestCard key={req.id} request={req} isMine={false} hasMyOffer={req.helper_id === profile?.id} />
+              <RequestCard key={req.id} request={req} isMine={false} hasMyOffer={req.helper_id === profile?.id} currentTime={now.getTime()} />
             ))}
           </div>
         ) : (
