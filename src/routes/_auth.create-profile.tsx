@@ -3,7 +3,7 @@ import { createFileRoute, useRouter, redirect } from '@tanstack/react-router'
 import { supabase } from '../lib/supabase'
 import { useQueryClient } from '@tanstack/react-query'
 import { getCoordsFromAddress, getDistanceInMeters } from '../lib/geocoding'
-import { User, MapPin, ShieldCheck, Key, Home, Dot } from 'lucide-react'
+import { User, MapPin, ShieldCheck, Key, Home, Dot, ChevronLeft } from 'lucide-react'
 import { PasscodeInput } from '../components/PasscodeInput'
 
 export const Route = createFileRoute('/_auth/create-profile')({
@@ -95,7 +95,7 @@ function CreateProfileComponent() {
   }
 
   const handleCreate = async () => {
-    if (!name || !neighborhoodName || !coords || !address) return
+    if (!name || !neighborhoodName || !coords || !address || !isLocationVerified) return
     setStep('executing')
     setError(null)
     try {
@@ -104,7 +104,7 @@ function CreateProfileComponent() {
         neighborhood_name: neighborhoodName.trim(),
         user_lat: coords.lat,
         user_lng: coords.lng,
-        locationVerified: isLocationVerified || false
+        locationVerified: isLocationVerified
       })
       if (rpcError) {
         if (rpcError.message.includes('COLLISION')) {
@@ -172,7 +172,7 @@ function CreateProfileComponent() {
 
   return (
     <div className="artisan-page-focus pt-2 pb-20 px-6">
-      <div className="artisan-container-sm">
+      <div className="artisan-container-large">
         <div className="flex items-center justify-center mb-1">
           <img 
             src="/logo.png" 
@@ -277,10 +277,16 @@ function CreateProfileComponent() {
 
         {step === 'choice' && (
           <div className="animate-in slide-in-from-bottom-4 duration-700 text-center">
+            <button 
+              onClick={() => setStep('name')}
+              className="nav-link-back"
+            >
+              <ChevronLeft className="w-4 h-4" />
+              <span>Back</span>
+            </button>
             <header className="artisan-header">
-              <div className="badge-pill mb-4 tracking-widest">Step 02 — Access</div>
-              <h2 className="artisan-header-title text-2xl">Welcome, {name.split(' ')[0]}</h2>
-              <p className="artisan-header-description">Select your neighborhood entry method.</p>
+              <h2 className="artisan-header-title text-2xl">Neighborhood Entry</h2>
+              <p className="artisan-header-description">Welcome, {name.split(' ')[0]}!</p>
             </header>
 
             <div className="grid gap-5 text-left">
@@ -297,7 +303,7 @@ function CreateProfileComponent() {
                     </div>
                     <h3 className="artisan-card-title text-lg">Join Existing</h3>
                   </div>
-                  <p className="artisan-meta-tiny leading-relaxed">I have been provided an invite code by a neighbor.</p>
+                  <p className="leading-relaxed">You have been provided an invite code by a neighbor.</p>
                   {method === 'join' && (
                   <div className="mt-4 pt-4 border-t border-brand-stone animate-in zoom-in">
                     {/* Label for context */}
@@ -315,6 +321,7 @@ function CreateProfileComponent() {
 
               <button 
                 onClick={() => setMethod('create')}
+                disabled={!isLocationVerified}
                 className={`artisan-card transition-all ${
                   method === 'create' ? 'border-brand-terracotta' : 'border-transparent'
                 }`}
@@ -324,10 +331,11 @@ function CreateProfileComponent() {
                     <div className="icon-box text-brand-terracotta bg-brand-terracotta/5 border-brand-terracotta/20">
                       <Home className="w-4 h-4" />
                     </div>
-                    <h3 className="artisan-card-title text-lg">Establish New</h3>
+                    <h3 className="text-wrap artisan-card-title text-lg">Establish New</h3>
                   </div>
-                  <p className="artisan-meta-tiny leading-relaxed">I am the first resident in this area to register.</p>
-                  {method === 'create' && (
+                  <p className="leading-relaxed">You are the first resident in this area to register.</p>
+                  <p className='italic'>{isLocationVerified ? '' : 'Verify your location in the previous step to establish a new neighborhood.'}</p>
+                  {method === 'create' && isLocationVerified && (
                     <div className="mt-4 pt-4 border-t border-brand-terracotta/10 animate-in zoom-in">
                       <input
                         className="artisan-input text-sm"

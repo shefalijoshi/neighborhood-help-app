@@ -154,7 +154,7 @@
   .artisan-card {
     @apply p-2 bg-white rounded-r-[2rem] rounded-l-[0.5rem] border-l-3 border-brand-terracotta
            shadow-[0_8px_30px_rgb(0,0,0,0.04)] 
-           transition-all duration-500 ease-out;
+           transition-all duration-500 ease-out disabled:opacity-50;
   }
 
   /* The inner recessed area for cards */
