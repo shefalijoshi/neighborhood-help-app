@@ -150,6 +150,7 @@ function CreateProfileComponent() {
           setIsLocationVerified(true);
           setIsVerifying(false);
           navigator.geolocation.clearWatch(watchId);
+          clearTimeout(verifyLocationTimer);
           setVerificationError(null);
         }
       },
@@ -157,15 +158,16 @@ function CreateProfileComponent() {
         console.log(error);
         navigator.geolocation.clearWatch(watchId);
         setIsVerifying(false);
+        clearTimeout(verifyLocationTimer);
         setVerificationError("Location access denied. Please use manual verification with a neighbor." );
       },
       { enableHighAccuracy: true, maximumAge: 0, timeout: 10000 }
     );
 
-    setTimeout(() => {
+    const verifyLocationTimer = setTimeout(() => {
       navigator.geolocation.clearWatch(watchId);
-      setIsLocationVerified(false);
       setIsVerifying(false);
+      setIsLocationVerified(false);
       setVerificationError("Your current location could not be verified. Please use manual verification with a neighbor.");
     }, 15000);
   };
