@@ -102,6 +102,10 @@ function ProfilePage() {
         </div>
         <header className="artisan-header">
           <h1 className="artisan-header-title">{fullProfile?.display_name}</h1>
+          <div className={`badge-pill mt-4 border flex items-center justify-center gap-2 mx-auto w-fit ${statusStyle.classes}`}>
+            {statusStyle.icon}
+            <span>{statusStyle.label}</span>
+          </div>
         </header>
 
         <div className="space-y-6">
