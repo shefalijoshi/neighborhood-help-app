@@ -71,8 +71,12 @@
     @apply grid grid-cols-2 md:grid-cols-3 gap-4 max-w-5xl mx-auto px-6 mb-12;
   }
 
+  .card-cta {
+    @apply p-4 mx-auto md:w-2xl;
+  }
+
   .card-main-focus {
-    @apply col-span-2 md:row-span-5 p-4 flex flex-col justify-center min-h-[400px];
+    @apply lg:row-span-3 p-4 flex flex-col justify-start h-[100%];
   }
 
   .card-feature {
@@ -80,7 +84,7 @@
   }
 
   .bg-flow {
-    @apply lg:bg-no-repeat lg:bg-[url('/vouch_flow.webp')] lg:bg-size-[55%] lg:bg-[70%_50%];
+    @apply lg:bg-no-repeat lg:bg-[url('/vouch_flow.webp')] lg:bg-size-[100%] lg:bg-[70%_30%];
   }
 
   /* 3. Input & Form Elements */
